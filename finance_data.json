@@ -1,0 +1,149 @@
+[
+  {
+    "id": "bfed49dd-274b-4942-99f6-1146ae7a86ab",
+    "name": "Salary",
+    "amount": 70000.0,
+    "transaction_type": "income",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "59c2209b-3f0a-451c-a5ef-bf39900028cb",
+    "name": "Kredi Kart\u0131 Asgari \u00d6deme",
+    "amount": 20000.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "7669cc78-ca09-4d6c-b172-69e7e9867737",
+    "name": "\u0130\u015f Bankas\u0131 Kredi",
+    "amount": 1153.53,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "ea782e91-cb3d-4aa4-b5b8-340d7e7a1d72",
+    "name": "\u0130\u015f Bankas\u0131 Kredi-2",
+    "amount": 625.28,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "e40b76f4-1529-4e86-b4bc-1f937b031626",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap",
+    "amount": 1773.2,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "fd3978d6-93e6-469d-9712-e56a8bcd7d4c",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap 2",
+    "amount": 236.43,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "96eadefd-23a7-49c8-82b3-d66a8dfd440b",
+    "name": "\u0130\u015fbank Ek Hesap",
+    "amount": 726.87,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "67d3bb14-74bb-4a59-af40-cf063eb47e39",
+    "name": "\u0130\u015f Ek Hesap",
+    "amount": 741.71,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "db9020c3-bf1b-4a93-a421-31e10bcf4444",
+    "name": "\u0130\u015fbank Ek Hesap",
+    "amount": 627.19,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "272fe0b9-9daa-47a8-9a8a-695a9348cb59",
+    "name": "\u0130\u015fbank Ek Hesap",
+    "amount": 323.72,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "da46343f-5507-456e-a62c-83d37e8a8336",
+    "name": "Garanti Kredi Kart\u0131",
+    "amount": 419.7,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "3566950f-0bc6-4c38-81fb-a3a9285ad945",
+    "name": "Garanti Kredi Taksis",
+    "amount": 2500.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "23925959-5d5a-443a-a9d1-43270eea32c7",
+    "name": "Garanti Ek Hesap",
+    "amount": 550.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "1a74c641-4738-4489-b228-c8c62cffb2fd",
+    "name": "Akbank Kredi",
+    "amount": 1584.9,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "857bd87e-2080-4d0c-b33d-ebdeb95ed70e",
+    "name": "Akbank Ek Hesap 1",
+    "amount": 1251.94,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "7b74de6a-a7de-41b3-922f-563e81cc66b2",
+    "name": "Akbank Ek Hesap 2",
+    "amount": 780.33,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "db3fd007-3fd6-4825-87f9-66abf4f7163b",
+    "name": "Akbank Ek  Hesap -3",
+    "amount": 1806.61,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "a42c3b4c-76a0-4e41-b28a-2a3de010ce21",
+    "name": "Akbank Kredi Kart\u0131 Asgari",
+    "amount": 4500.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "56e16bd7-9ad5-4cac-b3d0-2b7562cdf16e",
+    "name": "Annem - Babam",
+    "amount": 15000.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "d50d716c-ee93-4328-80b9-f82243ec2646",
+    "name": "Eni\u015fte Bor\u00e7",
+    "amount": 10000.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  },
+  {
+    "id": "c13f4ef9-14e2-4f4c-8874-27049d72a52d",
+    "name": "Vak\u0131f Ek Hesap",
+    "amount": 550.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00"
+  }
+]
