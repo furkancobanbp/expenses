@@ -54,7 +54,8 @@ The application follows the Model-View-Controller (MVC) architectural pattern:
 │   ├── __init__.py
 │   ├── dashboard.py
 │   ├── entry_form.py
-│   └── main_window.py
+│   ├── main_window.py
+|   └── transaction_list.py
 ├── finance_data.json    # Transaction data storage
 └── main.py              # Application entry point
 ```
