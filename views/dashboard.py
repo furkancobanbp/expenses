@@ -11,6 +11,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import calendar
 from collections import defaultdict
+import numpy as np
 
 class MplCanvas(FigureCanvas):
     def __init__(self, width=5, height=3, dpi=100):
@@ -271,7 +272,7 @@ class Dashboard(QWidget):
         self.update_category_chart(year, month)
         
     def update_monthly_chart(self, year):
-        """Update the monthly breakdown chart"""
+        """Update the monthly breakdown chart - IMPROVED VERSION"""
         monthly_data = self.controller.get_monthly_data_for_year(year)
         
         # Clear previous plot
@@ -280,37 +281,92 @@ class Dashboard(QWidget):
         months = list(range(1, 13))
         income_values = [monthly_data[m]['total_income'] for m in months]
         expense_values = [monthly_data[m]['total_expenses'] for m in months]
+        net_values = [monthly_data[m]['net_worth'] for m in months]
         
-        # Create bar chart with modern colors
+        # Set up X axis for months
         x = range(len(months))
-        width = 0.35
+        month_names = [calendar.month_abbr[m] for m in months]
         
-        self.monthly_canvas.axes.bar([i - width/2 for i in x], income_values, width, 
-                                     label='Income', color='#2e7d32', alpha=0.85,
-                                     edgecolor='white', linewidth=0.7)
-        self.monthly_canvas.axes.bar([i + width/2 for i in x], expense_values, width, 
-                                     label='Expenses', color='#c62828', alpha=0.85,
-                                     edgecolor='white', linewidth=0.7)
+        # Create stacked bar chart showing income and expenses
+        # with net worth as a point on top
         
-        # Add labels and formatting with improved styling
-        self.monthly_canvas.axes.set_title(f'Monthly Income vs Expenses ({year})', 
+        # Income as positive values
+        self.monthly_canvas.axes.bar(x, income_values, 
+                                    color='#4CAF50', alpha=0.8, 
+                                    label='Income',
+                                    width=0.6,
+                                    edgecolor='white', linewidth=0.5)
+        
+        # Expenses as negative values
+        self.monthly_canvas.axes.bar(x, [-val for val in expense_values], 
+                                    color='#F44336', alpha=0.8, 
+                                    label='Expenses',
+                                    width=0.6,
+                                    edgecolor='white', linewidth=0.5)
+        
+        # Net worth as marker points
+        self.monthly_canvas.axes.plot(x, net_values, 'o-', 
+                                    color='#2196F3', linewidth=2, 
+                                    markersize=6, label='Net Worth')
+        
+        # Add zero line
+        self.monthly_canvas.axes.axhline(y=0, color='#888888', linestyle='-', alpha=0.3, linewidth=1)
+        
+        # Add labels
+        self.monthly_canvas.axes.set_title(f'Financial Summary ({year})', 
                                           fontsize=11, fontweight='bold', pad=8)
         self.monthly_canvas.axes.set_xlabel('Month', fontsize=9, labelpad=5)
         self.monthly_canvas.axes.set_ylabel('Amount (₺)', fontsize=9, labelpad=5)
-        self.monthly_canvas.axes.set_xticks(x)
-        self.monthly_canvas.axes.set_xticklabels([calendar.month_abbr[m] for m in months])
         
-        # Legend
+        # Set x-axis ticks and labels
+        self.monthly_canvas.axes.set_xticks(x)
+        self.monthly_canvas.axes.set_xticklabels(month_names)
+        
+        # Add a single-column legend at the top-right
         legend = self.monthly_canvas.axes.legend(loc='upper right', frameon=True, 
-                                               fancybox=True, framealpha=0.9, 
-                                               shadow=True, fontsize=8)
+                                              fancybox=True, framealpha=0.9, 
+                                              shadow=True, fontsize=8)
         legend.get_frame().set_edgecolor('#cccccc')
+        
+        # Add data labels for current month
+        current_month = self.month_combo.currentData() - 1  # Adjust to 0-based index
+        if current_month >= 0 and current_month < len(x):
+            # Income label
+            self.monthly_canvas.axes.annotate(
+                f"{income_values[current_month]:,.0f} ₺",
+                xy=(x[current_month], income_values[current_month]),
+                xytext=(0, 5), textcoords="offset points",
+                ha='center', va='bottom',
+                fontsize=8, fontweight='bold', color='#2e7d32'
+            )
+            
+            # Expense label
+            self.monthly_canvas.axes.annotate(
+                f"{expense_values[current_month]:,.0f} ₺",
+                xy=(x[current_month], -expense_values[current_month]),
+                xytext=(0, -12), textcoords="offset points",
+                ha='center', va='top',
+                fontsize=8, fontweight='bold', color='#c62828'
+            )
+            
+            # Net worth label
+            self.monthly_canvas.axes.annotate(
+                f"{net_values[current_month]:,.0f} ₺",
+                xy=(x[current_month], net_values[current_month]),
+                xytext=(0, 10), textcoords="offset points",
+                ha='center', va='bottom',
+                fontsize=8, fontweight='bold', color='#1565c0'
+            )
+            
+            # Highlight current month
+            self.monthly_canvas.axes.axvline(x=x[current_month], color='#888888', 
+                                         linestyle='--', alpha=0.3, linewidth=1)
         
         self.monthly_canvas.fig.tight_layout()
         self.monthly_canvas.draw()
         
     def update_cumulative_chart(self):
-        """Update the cumulative overview chart"""
+        """Update the cumulative overview chart - IMPROVED VERSION"""
         cumulative_data = self.controller.get_cumulative_data()
         
         if not cumulative_data:
@@ -330,44 +386,129 @@ class Dashboard(QWidget):
         expenses = [d['cumulative_expenses'] for d in cumulative_data]
         net = [d['cumulative_net'] for d in cumulative_data]
         
-        # Clear previous plot
-        self.cumulative_canvas.axes.clear()
-        
-        # Create line chart with modern colors and styling
-        self.cumulative_canvas.axes.plot(dates, income, '-', label='Income', 
-                                        color='#2e7d32', linewidth=1.5, marker='o', 
-                                        markersize=3, markerfacecolor='white')
-        self.cumulative_canvas.axes.plot(dates, expenses, '-', label='Expenses', 
-                                        color='#c62828', linewidth=1.5, marker='o', 
-                                        markersize=3, markerfacecolor='white')
-        self.cumulative_canvas.axes.plot(dates, net, '-', label='Net Worth', 
-                                        color='#1565c0', linewidth=2, marker='o', 
-                                        markersize=4, markerfacecolor='white')
-        
-        # Add labels and formatting with improved styling
-        self.cumulative_canvas.axes.set_title('Cumulative Financial Overview', 
+        # Determine if we have enough data points for a sophisticated chart
+        if len(dates) < 2:
+            # Not enough data points, use simpler presentation
+            self.cumulative_canvas.axes.clear()
+            
+            # Create a horizontal stacked bar chart
+            labels = ['Current Status']
+            width = 0.5
+            
+            # Calculate the current values
+            current_income = income[-1] if income else 0
+            current_expenses = expenses[-1] if expenses else 0
+            current_net = net[-1] if net else 0
+            
+            # Create stacked bars
+            self.cumulative_canvas.axes.barh(labels, [current_income], 
+                                           color='#4CAF50', alpha=0.8, 
+                                           height=width, edgecolor='white',
+                                           label='Income')
+            
+            self.cumulative_canvas.axes.barh(labels, [-current_expenses], left=[current_income],
+                                           color='#F44336', alpha=0.8, 
+                                           height=width, edgecolor='white',
+                                           label='Expenses')
+            
+            # Add labels for each value
+            self.cumulative_canvas.axes.text(current_income/2, 0, f"{current_income:,.0f} ₺", 
+                                           ha='center', va='center', color='white', 
+                                           fontweight='bold', fontsize=9)
+            
+            self.cumulative_canvas.axes.text(current_income - current_expenses/2, 0, 
+                                           f"{current_expenses:,.0f} ₺", 
+                                           ha='center', va='center', color='white', 
+                                           fontweight='bold', fontsize=9)
+            
+            # Add net worth indicator
+            self.cumulative_canvas.axes.annotate(
+                f"Net Worth: {current_net:,.0f} ₺",
+                xy=(current_income - current_expenses, 0),
+                xytext=(0, 20), textcoords="offset points",
+                ha='center', va='bottom',
+                fontsize=10, fontweight='bold', 
+                color='#1565c0',
+                bbox=dict(boxstyle="round,pad=0.3", fc="#e3f2fd", ec="#1565c0", alpha=0.8)
+            )
+            
+            self.cumulative_canvas.axes.set_title('Current Financial Status', 
+                                                fontsize=11, fontweight='bold', pad=8)
+        else:
+            # Clear previous plot
+            self.cumulative_canvas.axes.clear()
+            
+            # Create area chart for income and expenses
+            self.cumulative_canvas.axes.fill_between(dates, income, 
+                                                 color='#4CAF50', alpha=0.3, 
+                                                 label='Income')
+            
+            self.cumulative_canvas.axes.fill_between(dates, expenses, 
+                                                 color='#F44336', alpha=0.3, 
+                                                 label='Expenses')
+            
+            # Add line for net worth
+            self.cumulative_canvas.axes.plot(dates, net, '-', 
+                                         color='#1565c0', linewidth=2.5, 
+                                         marker='o', markersize=5,
+                                         label='Net Worth')
+            
+            # Add labels for final values
+            final_date = dates[-1]
+            final_income = income[-1]
+            final_expenses = expenses[-1]
+            final_net = net[-1]
+            
+            # Income label
+            self.cumulative_canvas.axes.annotate(
+                f"{final_income:,.0f} ₺",
+                xy=(final_date, final_income),
+                xytext=(5, 0), textcoords="offset points",
+                ha='left', va='center',
+                fontsize=8, fontweight='bold', color='#2e7d32'
+            )
+            
+            # Expense label
+            self.cumulative_canvas.axes.annotate(
+                f"{final_expenses:,.0f} ₺",
+                xy=(final_date, final_expenses),
+                xytext=(5, 0), textcoords="offset points",
+                ha='left', va='center',
+                fontsize=8, fontweight='bold', color='#c62828'
+            )
+            
+            # Net worth label
+            self.cumulative_canvas.axes.annotate(
+                f"{final_net:,.0f} ₺",
+                xy=(final_date, final_net),
+                xytext=(5, 0), textcoords="offset points",
+                ha='left', va='center',
+                fontsize=8, fontweight='bold', color='#1565c0'
+            )
+            
+            self.cumulative_canvas.axes.set_title('Financial Growth Over Time', 
                                               fontsize=11, fontweight='bold', pad=8)
-        self.cumulative_canvas.axes.set_xlabel('Date', fontsize=9, labelpad=5)
-        self.cumulative_canvas.axes.set_ylabel('Amount (₺)', fontsize=9, labelpad=5)
+            self.cumulative_canvas.axes.set_xlabel('Date', fontsize=9, labelpad=5)
+            self.cumulative_canvas.axes.set_ylabel('Amount (₺)', fontsize=9, labelpad=5)
+            
+            # Format the dates on x-axis
+            self.cumulative_canvas.axes.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+            self.cumulative_canvas.axes.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+            
+            # Rotate date labels for better readability
+            plt.setp(self.cumulative_canvas.axes.get_xticklabels(), rotation=45, ha='right')
         
-        # Format the dates on x-axis
-        self.cumulative_canvas.axes.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
-        self.cumulative_canvas.axes.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
-        
-        # Legend
+        # Add legend
         legend = self.cumulative_canvas.axes.legend(loc='upper left', frameon=True, 
-                                                  fancybox=True, framealpha=0.9, 
-                                                  shadow=True, fontsize=8)
+                                                 fancybox=True, framealpha=0.9, 
+                                                 shadow=True, fontsize=8)
         legend.get_frame().set_edgecolor('#cccccc')
-        
-        # Rotate date labels for better readability
-        plt.setp(self.cumulative_canvas.axes.get_xticklabels(), rotation=45, ha='right')
         
         self.cumulative_canvas.fig.tight_layout()
         self.cumulative_canvas.draw()
         
     def update_trend_chart(self, year):
-        """Update the income vs expense trend chart - NEW CHART"""
+        """Update the income vs expense trend chart - IMPROVED VERSION"""
         monthly_data = self.controller.get_monthly_data_for_year(year)
         
         # Clear previous plot
@@ -378,52 +519,88 @@ class Dashboard(QWidget):
         expense_values = [monthly_data[m]['total_expenses'] for m in months]
         net_values = [monthly_data[m]['net_worth'] for m in months]
         
-        # Create line chart with area fill
-        x = range(len(months))
+        # Set up month positions
+        x = np.arange(len(months))
         
-        # Plot income
-        self.trend_canvas.axes.plot(x, income_values, '-', label='Income', 
-                                  color='#2e7d32', linewidth=2, marker='o', 
-                                  markersize=4, markerfacecolor='white')
-        self.trend_canvas.axes.fill_between(x, income_values, alpha=0.2, color='#2e7d32')
+        # Calculate ranges for shading
+        max_value = max(max(income_values), max(expense_values)) * 1.1
         
-        # Plot expenses
-        self.trend_canvas.axes.plot(x, expense_values, '-', label='Expenses', 
-                                  color='#c62828', linewidth=2, marker='o', 
-                                  markersize=4, markerfacecolor='white')
-        self.trend_canvas.axes.fill_between(x, expense_values, alpha=0.2, color='#c62828')
+        # Create area chart for positive and negative cash flow
+        for i in range(len(months)):
+            # Skip months with no data
+            if income_values[i] == 0 and expense_values[i] == 0:
+                continue
+                
+            # Green for positive cash flow
+            if net_values[i] > 0:
+                self.trend_canvas.axes.fill_between([x[i]-0.4, x[i]+0.4], [0, 0], [net_values[i], net_values[i]], 
+                                                 color='#4CAF50', alpha=0.2)
+            # Red for negative cash flow
+            elif net_values[i] < 0:
+                self.trend_canvas.axes.fill_between([x[i]-0.4, x[i]+0.4], [0, 0], [net_values[i], net_values[i]], 
+                                                 color='#F44336', alpha=0.2)
         
-        # Add savings/deficit as bars
-        for i, (inc, exp) in enumerate(zip(income_values, expense_values)):
-            if inc > exp:  # Savings
-                self.trend_canvas.axes.bar(i, inc-exp, bottom=exp, color='#2e7d32', alpha=0.3, width=0.5)
-            elif exp > inc:  # Deficit
-                self.trend_canvas.axes.bar(i, inc-exp, bottom=inc, color='#c62828', alpha=0.3, width=0.5)
+        # Draw lines for income and expenses
+        self.trend_canvas.axes.plot(x, income_values, '-o', color='#4CAF50', 
+                                  linewidth=2, markersize=6, label='Income')
+        self.trend_canvas.axes.plot(x, expense_values, '-o', color='#F44336', 
+                                  linewidth=2, markersize=6, label='Expenses')
+        
+        # Highlight the balance point with a horizontal line
+        self.trend_canvas.axes.axhline(y=0, color='#444444', linestyle='-', alpha=0.3)
+        
+        # Add savings/deficit markers at each point
+        for i, (inc, exp, net) in enumerate(zip(income_values, expense_values, net_values)):
+            # Skip months with no data
+            if inc == 0 and exp == 0:
+                continue
+                
+            # Add net value text
+            if net > 0:
+                color = '#4CAF50'  # Green for positive
+                y_offset = 10
+                va = 'bottom'
+                prefix = '+'
+            else:
+                color = '#F44336'  # Red for negative
+                y_offset = -10
+                va = 'top'
+                prefix = ''
+            
+            # Add text label for the net value
+            self.trend_canvas.axes.annotate(
+                f"{prefix}{net:,.0f} ₺",
+                xy=(x[i], (inc + exp) / 2),
+                xytext=(0, y_offset), textcoords="offset points",
+                ha='center', va=va,
+                fontsize=8, fontweight='bold', color=color
+            )
         
         # Add labels and formatting
-        self.trend_canvas.axes.set_title(f'Monthly Income vs Expense Trend ({year})', 
-                                       fontsize=11, fontweight='bold', pad=8)
+        self.trend_canvas.axes.set_title(f'Monthly Cash Flow ({year})', 
+                                      fontsize=11, fontweight='bold', pad=8)
         self.trend_canvas.axes.set_xlabel('Month', fontsize=9, labelpad=5)
         self.trend_canvas.axes.set_ylabel('Amount (₺)', fontsize=9, labelpad=5)
+        
+        # Set x-axis ticks and labels
         self.trend_canvas.axes.set_xticks(x)
         self.trend_canvas.axes.set_xticklabels([calendar.month_abbr[m] for m in months])
         
         # Add a legend
-        from matplotlib.patches import Patch
-        from matplotlib.lines import Line2D
-        legend_elements = [
-            Line2D([0], [0], color='#2e7d32', lw=2, marker='o', markersize=4, markerfacecolor='white', label='Income'),
-            Line2D([0], [0], color='#c62828', lw=2, marker='o', markersize=4, markerfacecolor='white', label='Expenses'),
-            Patch(facecolor='#2e7d32', alpha=0.3, label='Savings'),
-            Patch(facecolor='#c62828', alpha=0.3, label='Deficit')
-        ]
-        self.trend_canvas.axes.legend(handles=legend_elements, loc='upper right', fontsize=8)
+        legend = self.trend_canvas.axes.legend(loc='upper right', fontsize=8)
+        
+        # Get the current month
+        current_month = self.month_combo.currentData() - 1  # Adjust to 0-based index
+        if current_month >= 0 and current_month < len(x):
+            # Highlight current month
+            self.trend_canvas.axes.axvline(x=x[current_month], color='#888888', 
+                                        linestyle='--', alpha=0.5, linewidth=1)
         
         self.trend_canvas.fig.tight_layout()
         self.trend_canvas.draw()
         
     def update_category_chart(self, year, month):
-        """Update the expense category breakdown pie chart - NEW CHART"""
+        """Update the expense category breakdown pie chart"""
         # Get transactions for the selected month
         transactions = self.controller.finance_manager.get_transactions_by_month(year, month)
         
@@ -470,7 +647,7 @@ class Dashboard(QWidget):
             top_categories["Other"] = other_amount
             sorted_categories = top_categories
         
-        # Prepare data for pie chart
+        # Prepare data for donut chart
         labels = list(sorted_categories.keys())
         sizes = list(sorted_categories.values())
         
@@ -481,40 +658,49 @@ class Dashboard(QWidget):
         # Set an aspect ratio for the pie chart
         self.category_canvas.axes.set_aspect('equal')
         
-        # Create pie chart with custom colors
-        colors = ['#FF5252', '#FF7043', '#FFCA28', '#9CCC65', '#4FC3F7', '#7986CB', '#BA68C8']
-        explode = [0.05] * len(labels)  # Slightly explode all slices
+        # Create donut chart with custom colors
+        colors = ['#42A5F5', '#66BB6A', '#FFA726', '#EF5350', '#AB47BC', '#7E57C2', '#78909C']
         
+        # Create wedges with auto-pct text
         wedges, texts, autotexts = self.category_canvas.axes.pie(
             sizes, 
-            labels=labels,
+            labels=None,  # We'll add custom labels
             colors=colors[:len(labels)],
-            explode=explode,
             autopct='%1.1f%%',
-            shadow=True,
-            startangle=90,
-            textprops={'fontsize': 8},
-            wedgeprops={'edgecolor': 'white', 'linewidth': 1}
+            pctdistance=0.85,
+            wedgeprops={'width': 0.4, 'edgecolor': 'w', 'linewidth': 2},
+            textprops={'fontsize': 9, 'color': '#333333'},
+            startangle=90
         )
         
-        # Styling for the percentage text
+        # Style percentage texts
         for autotext in autotexts:
-            autotext.set_fontsize(7)
-            autotext.set_weight('bold')
-            autotext.set_color('white')
+            autotext.set_fontsize(8)
+            autotext.set_fontweight('bold')
+        
+        # Create center circle for donut chart
+        circle = plt.Circle((0, 0), 0.4, fc='white')
+        self.category_canvas.axes.add_artist(circle)
+        
+        # Display total amount in center
+        self.category_canvas.axes.text(0, 0, f"{total:,.0f} ₺",
+                                     ha='center', va='center',
+                                     fontsize=11, fontweight='bold')
+        
+        self.category_canvas.axes.text(0, -0.15, "Total Expenses",
+                                     ha='center', va='center',
+                                     fontsize=8, color='#555555')
+        
+        # Create legend with categories and values
+        legend_labels = [f"{label} ({value:,.0f} ₺)" for label, value in zip(labels, sizes)]
+        self.category_canvas.axes.legend(wedges, legend_labels,
+                                       loc="center left",
+                                       bbox_to_anchor=(1, 0.5),
+                                       fontsize=8)
         
         # Add title
         self.category_canvas.axes.set_title(f'Expense Breakdown - {calendar.month_name[month]} {year}', 
                                           fontsize=11, fontweight='bold', pad=8)
-        
-        # Add transaction count information
-        transaction_count = len(expense_transactions)
-        self.category_canvas.axes.text(0.5, -0.1, 
-                                     f'Total: {total:,.2f} ₺ ({transaction_count} transactions)',
-                                     horizontalalignment='center',
-                                     verticalalignment='center',
-                                     fontsize=8,
-                                     transform=self.category_canvas.axes.transAxes)
         
         self.category_canvas.fig.tight_layout()
         self.category_canvas.draw()

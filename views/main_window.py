@@ -4,6 +4,7 @@ from PyQt5.QtGui import QFont
 
 from .dashboard import Dashboard
 from .entry_form import EntryForm
+from .transaction_list import TransactionList
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -37,9 +38,21 @@ class MainWindow(QMainWindow):
         tab_widget = QTabWidget()
         tab_widget.setDocumentMode(True)
         
+        # Adjust tab size to fit content
+        tab_widget.setStyleSheet("""
+            QTabBar::tab {
+                min-width: 120px;
+                padding: 8px 12px;
+            }
+        """)
+        
         # Create dashboard tab
         self.dashboard = Dashboard(self.controller)
         tab_widget.addTab(self.dashboard, "Dashboard")
+        
+        # Create transactions list tab
+        self.transaction_list = TransactionList(self.controller)
+        tab_widget.addTab(self.transaction_list, "Transactions")
         
         # Create entry form tab
         self.entry_form = EntryForm(self.controller)
@@ -52,5 +65,6 @@ class MainWindow(QMainWindow):
         self.entry_form.transaction_added.connect(self.on_transaction_added)
         
     def on_transaction_added(self):
-        # Refresh dashboard when a transaction is added
+        # Refresh views when a transaction is added
         self.dashboard.refresh_charts()
+        self.transaction_list.refresh_data()
