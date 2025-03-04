@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont
 from .dashboard import Dashboard
 from .entry_form import EntryForm
 from .transaction_list import TransactionList
+from .goals import GoalsTab
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -54,6 +55,10 @@ class MainWindow(QMainWindow):
         self.transaction_list = TransactionList(self.controller)
         tab_widget.addTab(self.transaction_list, "Transactions")
         
+        # Create goals tab
+        self.goals_tab = GoalsTab(self.controller)
+        tab_widget.addTab(self.goals_tab, "Financial Goals")
+        
         # Create entry form tab
         self.entry_form = EntryForm(self.controller)
         tab_widget.addTab(self.entry_form, "Add Transaction")
@@ -68,3 +73,4 @@ class MainWindow(QMainWindow):
         # Refresh views when a transaction is added
         self.dashboard.refresh_charts()
         self.transaction_list.refresh_data()
+        self.goals_tab.refresh_goals()

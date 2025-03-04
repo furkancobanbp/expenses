@@ -1,0 +1,11 @@
+[
+  {
+    "id": "80330582-9dcd-45d2-9a96-3e4ecccb7bdb",
+    "name": "Lower Expense",
+    "amount": 60000.0,
+    "goal_type": "expense",
+    "year": 2025,
+    "month": 4,
+    "active": true
+  }
+]

@@ -1,6 +1,6 @@
 # Personal Finance Manager
 
-A desktop application for tracking personal finances, visualizing financial data, and managing transactions.
+A desktop application for tracking personal finances, visualizing financial data, managing transactions, and setting financial goals.
 
 ## Overview
 
@@ -9,6 +9,7 @@ This application allows users to:
 - Visualize financial data with interactive charts
 - View monthly summaries of income, expenses, and net worth
 - Track financial trends over time
+- Set and monitor financial goals for income, expenses, and savings
 
 ## Features
 
@@ -20,8 +21,15 @@ This application allows users to:
   
 - **Transaction Management**:
   - Add new income/expense transactions
+  - View transactions by period (current month, previous month, etc.)
+  - Sort and filter transactions
   - Date selection for transaction organization
-  - Simple form interface
+  
+- **Financial Goals**:
+  - Set income, expense, and savings goals
+  - Track progress toward financial targets
+  - Visual indicators of goal completion status
+  - Period-specific goals (monthly targets)
 
 ## Technical Architecture
 
@@ -31,10 +39,14 @@ The application follows the Model-View-Controller (MVC) architectural pattern:
 - `Transaction`: Represents individual financial transactions
 - `TransactionType`: Enum for income/expense types
 - `FinanceManager`: Manages transaction data and calculations
+- `FinancialGoal`: Represents a financial target with type and period
+- `GoalType`: Enum for income/expense/savings goals
 
 ### Views
 - `MainWindow`: Primary container for the application UI
 - `Dashboard`: Visualization of financial data with charts
+- `TransactionList`: Organized display of income and expense transactions
+- `GoalsTab`: Goal creation and tracking interface
 - `EntryForm`: Form for adding new transactions
 
 ### Controllers
@@ -49,14 +61,17 @@ The application follows the Model-View-Controller (MVC) architectural pattern:
 ├── models/
 │   ├── __init__.py
 │   ├── finance_manager.py
-│   └── transaction.py
+│   ├── transaction.py
+│   └── financial_goal.py
 ├── views/
 │   ├── __init__.py
 │   ├── dashboard.py
 │   ├── entry_form.py
-│   ├── main_window.py
-|   └── transaction_list.py
+│   ├── transaction_list.py
+│   ├── goals.py
+│   └── main_window.py
 ├── finance_data.json    # Transaction data storage
+├── financial_goals.json # Goals data storage
 └── main.py              # Application entry point
 ```
 
@@ -95,6 +110,27 @@ python main.py
    - Date: Month and year of the transaction
 3. Click "Add Transaction"
 
+### Viewing Transactions
+1. Navigate to the "Transactions" tab
+2. Select a time period from the dropdown (current month, previous month, etc.)
+3. View income and expense transactions separately
+4. See transaction totals for each category
+
+### Setting Financial Goals
+1. Navigate to the "Financial Goals" tab
+2. Fill out the goal creation form:
+   - Name: Description of your financial goal
+   - Target Amount: The amount you aim to reach or stay under
+   - Goal Type: Income, Expense Budget, or Savings Target
+   - Period: The month and year for the goal
+3. Click "Add Goal"
+
+### Tracking Goal Progress
+1. Navigate to the "Financial Goals" tab
+2. Select the month/year to view goals for that period
+3. View progress bars and completion percentages
+4. See current amounts and remaining amounts for each goal
+
 ### Viewing Financial Data
 1. Navigate to the "Dashboard" tab
 2. Select the year and month to view
@@ -104,7 +140,7 @@ python main.py
 
 ## Data Storage
 
-All transaction data is stored in `finance_data.json` in the application directory. The format is a JSON array with individual transaction objects.
+All transaction data is stored in `finance_data.json` and goals data is stored in `financial_goals.json` in the application directory.
 
 ## Customization
 
@@ -114,11 +150,14 @@ The application uses a modern, customizable UI with a blue color scheme. You can
 
 Potential features for future development:
 - Data import/export functionality
-- Budget planning and analysis
+- Budget planning templates
 - Transaction categories and tags
 - Multiple currency support
 - Recurring transaction automation
+- Goal achievement notifications
+- Debt reduction planning
+
 
 ## Credits
 
-Created by Furkan Coban
+Created by Furkan Çoban
