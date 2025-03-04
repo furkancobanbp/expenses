@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, 
                            QLabel, QLineEdit, QComboBox, QPushButton, 
-                           QDateEdit, QMessageBox, QGroupBox)
+                           QDateEdit, QMessageBox, QGridLayout)
 from PyQt5.QtCore import Qt, pyqtSignal, QDate
 
 from datetime import datetime
@@ -16,44 +16,41 @@ class EntryForm(QWidget):
         self.init_ui()
         
     def init_ui(self):
-        # Main layout
+        # Single main layout with everything properly sized
         main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(15, 15, 15, 15)
+        main_layout.setSpacing(10)
         
-        # Form group with enhanced styling
-        form_group = QGroupBox("Add New Transaction")
-        form_layout = QFormLayout(form_group)
-        form_layout.setSpacing(15)
-        form_layout.setContentsMargins(25, 35, 25, 25)
+        # Header
+        header_label = QLabel("Enter Transaction Details")
+        header_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #3a4f9b;")
+        header_label.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(header_label)
         
-        # Add heading
-        heading = QLabel("Enter Transaction Details")
-        heading.setStyleSheet("font-size: 18px; font-weight: bold; color: #3a4f9b; margin-bottom: 15px;")
-        heading.setAlignment(Qt.AlignCenter)
-        form_layout.addRow(heading)
-        
-        # Add separator
-        separator = QFrame()
-        separator.setFrameShape(QFrame.HLine)
-        separator.setFrameShadow(QFrame.Sunken)
-        separator.setStyleSheet("background-color: #e9ecef; margin: 10px 0 20px 0;")
-        separator.setFixedHeight(1)
-        form_layout.addRow(separator)
+        # Form layout in a grid for better organization
+        form_grid = QGridLayout()
+        form_grid.setVerticalSpacing(10)
+        form_grid.setHorizontalSpacing(15)
         
         # Transaction name
         name_label = QLabel("Transaction Name:")
         name_label.setStyleSheet("font-weight: 500;")
         self.name_edit = QLineEdit()
         self.name_edit.setPlaceholderText("e.g., Salary, Rent, Groceries")
-        self.name_edit.setMinimumHeight(40)
-        form_layout.addRow(name_label, self.name_edit)
+        self.name_edit.setFixedHeight(30)
+        
+        form_grid.addWidget(name_label, 0, 0)
+        form_grid.addWidget(self.name_edit, 0, 1)
         
         # Amount
-        amount_label = QLabel("Amount ($):")
+        amount_label = QLabel("Amount (₺):")
         amount_label.setStyleSheet("font-weight: 500;")
         self.amount_edit = QLineEdit()
-        self.amount_edit.setPlaceholderText("Amount in dollars")
-        self.amount_edit.setMinimumHeight(40)
-        form_layout.addRow(amount_label, self.amount_edit)
+        self.amount_edit.setPlaceholderText("Amount in Turkish Lira")
+        self.amount_edit.setFixedHeight(30)
+        
+        form_grid.addWidget(amount_label, 1, 0)
+        form_grid.addWidget(self.amount_edit, 1, 1)
         
         # Transaction type
         type_label = QLabel("Type:")
@@ -61,8 +58,10 @@ class EntryForm(QWidget):
         self.type_combo = QComboBox()
         self.type_combo.addItem(TransactionType.INCOME.value, TransactionType.INCOME)
         self.type_combo.addItem(TransactionType.EXPENSE.value, TransactionType.EXPENSE)
-        self.type_combo.setMinimumHeight(40)
-        form_layout.addRow(type_label, self.type_combo)
+        self.type_combo.setFixedHeight(30)
+        
+        form_grid.addWidget(type_label, 2, 0)
+        form_grid.addWidget(self.type_combo, 2, 1)
         
         # Date (month and year)
         date_label = QLabel("Date:")
@@ -71,32 +70,37 @@ class EntryForm(QWidget):
         self.date_edit.setDisplayFormat("MMMM yyyy")
         self.date_edit.setDate(QDate.currentDate())
         self.date_edit.setCalendarPopup(True)
-        self.date_edit.setMinimumHeight(40)
-        form_layout.addRow(date_label, self.date_edit)
+        self.date_edit.setFixedHeight(30)
         
-        # Add some space before buttons
-        form_layout.addItem(QSpacerItem(20, 20))
+        form_grid.addWidget(date_label, 3, 0)
+        form_grid.addWidget(self.date_edit, 3, 1)
         
-        main_layout.addWidget(form_group)
+        # Add form grid to main layout
+        main_layout.addLayout(form_grid)
         
-        # Buttons with modern styling
+        # Add spacer for better appearance
+        main_layout.addSpacing(20)
+        
+        # Buttons - side by side
         buttons_layout = QHBoxLayout()
         buttons_layout.setSpacing(15)
         
         self.clear_btn = QPushButton("Clear")
         self.clear_btn.clicked.connect(self.clear_form)
-        self.clear_btn.setMinimumHeight(45)
+        self.clear_btn.setFixedHeight(35)
         
         self.add_btn = QPushButton("Add Transaction")
         self.add_btn.setObjectName("primaryButton")
         self.add_btn.clicked.connect(self.add_transaction)
-        self.add_btn.setMinimumHeight(45)
+        self.add_btn.setFixedHeight(35)
         
         buttons_layout.addWidget(self.clear_btn)
         buttons_layout.addWidget(self.add_btn)
         
         main_layout.addLayout(buttons_layout)
-        main_layout.addStretch()
+        
+        # Add stretch to push all content to the top
+        main_layout.addStretch(1)
         
     def clear_form(self):
         """Clear all form fields"""

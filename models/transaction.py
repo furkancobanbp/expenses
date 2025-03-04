@@ -7,30 +7,28 @@ class TransactionType(Enum):
     EXPENSE = "expense"
 
 @dataclass
-
 class Transaction:
-    id: str #UUID
+    id: str  # UUID
     name: str
     amount: float
     transaction_type: TransactionType
-    date: datetime #only month and year will be used
+    date: datetime  # only month and year will be used
 
     def to_dict(self):
         return {
-            "id" : self.id,
-            "name" : self.name,
-            "amount" : self.amount,
-            "transaction_type" : self.transaction_type.value,
-            "date" : self.date.isoformat()
+            "id": self.id,
+            "name": self.name,
+            "amount": self.amount,
+            "transaction_type": self.transaction_type.value,
+            "date": self.date.isoformat()
         }
 
-@classmethod 
-
-def from_dict(cls, data):
-    return cls(
-        id=data["id"],
-        name=data["name"],
-        amount=data["amount"],
-        transaction_type=TransactionType(data["transaction_type"]),
-        date=datetime.fromisoformat(data["date"])
-    )
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            id=data["id"],
+            name=data["name"],
+            amount=data["amount"],
+            transaction_type=TransactionType(data["transaction_type"]),
+            date=datetime.fromisoformat(data["date"])
+        )

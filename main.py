@@ -28,26 +28,26 @@ def main():
         }
         
         QLabel {
-            font-size: 14px;
+            font-size: 13px;
         }
         
         /* Header */
         QLabel[objectName="header"] {
-            font-size: 26px;
+            font-size: 18px;
             font-weight: bold;
             color: #3a4f9b;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 5px;
+            max-height: 30px;
         }
         
         /* Group Boxes */
         QGroupBox {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             border: none;
-            border-radius: 10px;
-            margin-top: 15px;
-            padding-top: 10px;
+            border-radius: 8px;
+            margin-top: 12px;
+            padding-top: 8px;
             background-color: #ffffff;
             color: #3a4f9b;
             /* Box shadow effect */
@@ -57,8 +57,8 @@ def main():
         QGroupBox::title {
             subcontrol-origin: margin;
             left: 15px;
-            top: -10px;
-            padding: 0 7px;
+            top: -8px;
+            padding: 0 5px;
             background-color: #ffffff;
         }
         
@@ -66,12 +66,12 @@ def main():
         QPushButton {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-size: 14px;
+            border-radius: 5px;
+            padding: 6px 12px;
+            font-size: 13px;
             font-weight: 500;
             color: #495057;
-            min-height: 38px;
+            min-height: 30px;
         }
         
         QPushButton:hover {
@@ -101,41 +101,41 @@ def main():
         /* Form Controls */
         QComboBox, QLineEdit, QDateEdit {
             border: 1px solid #ced4da;
-            border-radius: 6px;
-            padding: 10px;
+            border-radius: 4px;
+            padding: 6px;
             background-color: white;
-            font-size: 14px;
+            font-size: 13px;
             min-height: 25px;
             selection-background-color: #3a4f9b;
         }
         
         QComboBox:focus, QLineEdit:focus, QDateEdit:focus {
             border: 2px solid #3a4f9b;
-            padding: 9px;
+            padding: 5px;
         }
         
         QComboBox::drop-down {
             border: none;
-            width: 30px;
+            width: 25px;
         }
         
         QComboBox::down-arrow {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%233a4f9b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
         }
         
         QDateEdit::drop-down {
             border: none;
-            width: 30px;
+            width: 25px;
         }
         
         /* Tab Widget */
         QTabWidget::pane {
             border: none;
             background-color: #ffffff;
-            border-radius: 10px;
-            padding: 5px;
+            border-radius: 8px;
+            padding: 2px;
             /* Box shadow effect */
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
@@ -143,14 +143,14 @@ def main():
         QTabBar::tab {
             background-color: #e9ecef;
             border: none;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            min-width: 100px;
-            padding: 12px 20px;
-            font-size: 14px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            min-width: 80px;
+            padding: 8px 15px;
+            font-size: 13px;
             font-weight: 500;
             color: #6c757d;
-            margin-right: 4px;
+            margin-right: 3px;
         }
         
         QTabBar::tab:selected {
@@ -162,7 +162,7 @@ def main():
         }
         
         QTabBar::tab:!selected {
-            margin-top: 4px;
+            margin-top: 3px;
         }
         
         QTabBar::tab:hover {
@@ -173,13 +173,13 @@ def main():
         QScrollBar:vertical {
             border: none;
             background: #f8f9fa;
-            width: 10px;
+            width: 8px;
             margin: 0px;
         }
         
         QScrollBar::handle:vertical {
             background: #ced4da;
-            border-radius: 5px;
+            border-radius: 4px;
             min-height: 20px;
         }
         
@@ -193,15 +193,15 @@ def main():
         
         /* Form styles */
         QFormLayout {
-            spacing: 15px;
+            spacing: 12px;
         }
         
         /* Value displays (income, expense, net worth) */
         QLabel[objectName="valueLabel"] {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
-            padding: 5px;
-            border-radius: 6px;
+            padding: 3px;
+            border-radius: 4px;
         }
     """)
     
