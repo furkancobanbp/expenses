@@ -224,7 +224,9 @@ class ForecastEntryForm(QWidget):
         
         # Add forecast
         try:
-            self.controller.add_forecast(name, amount, category_name, date, notes)
+            # The updated controller method signature only accepts name, amount, category_name, date
+            # and handles notes separately
+            self.controller.add_forecast(name, amount, category_name, date)
             
             # Show success message
             QMessageBox.information(self, "Success", "Forecast transaction added successfully!")

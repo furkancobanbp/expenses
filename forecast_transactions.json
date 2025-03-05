@@ -1,0 +1,222 @@
+[
+    {
+      "id": "e5d50a58-3e8d-42cb-ab11-2cbb7c66466a",
+      "name": "İş Bankası Total Instalment",
+      "amount": 14838.31,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Credit Card Debt",
+      "notes": "Forecasted monthly credit card installment payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "0a604e8c-48f9-4aec-ac84-8fd906c0e90f",
+      "name": "İş Bankası Kredi -1",
+      "amount": 1153.53,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "4d12e065-3599-4645-9e10-195910170a8f",
+      "name": "İş Bank Kredi-2",
+      "amount": 625.28,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "84b423f8-eb32-4e80-b64b-9ee7e79f7f53",
+      "name": "İş Bankası Ek Hesap -1",
+      "amount": 1773.2,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "69fed594-8272-4d57-8437-33723b2b2189",
+      "name": "İş Bankası Ek Hesap -2",
+      "amount": 236.43,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "649f3817-e1e9-4dea-9a23-8874388928df",
+      "name": "İş Bankası Ek Hesap -3",
+      "amount": 726.87,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "819b1250-bbcf-4a0a-8ab4-e78f532952e3",
+      "name": "İş Bankası Ek Hesap -4",
+      "amount": 143.37,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "9a64d54d-4aaf-4cb5-a178-d4af0d957793",
+      "name": "İş Bankası Ek Hesap -5",
+      "amount": 627.19,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "995de087-68ac-4cee-9bab-0b387b39f462",
+      "name": "İş Bankası Ek Hesap -6",
+      "amount": 323.72,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "b3735cea-e659-42b4-a9c3-93863cf866ef",
+      "name": "Garanti Kredi",
+      "amount": 2500.0,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "bb3a34e1-e974-4eb5-8b8d-d458b3ca64f5",
+      "name": "Garanti Ek Hesap",
+      "amount": 550.0,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "cb9096dd-f96d-4e8e-b787-7001d90f2a88",
+      "name": "Akbank Kredi",
+      "amount": 1584.9,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "0d94ea05-bb5c-4339-b806-173a5e377bf3",
+      "name": "Akbank Artı Para - 1",
+      "amount": 1251.94,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "f2146667-5306-4e06-8411-81157f4bb28a",
+      "name": "Akbank Artı Para - 2",
+      "amount": 780.33,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted loan payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "fdc7a873-d322-42e0-b627-9909d5319b15",
+      "name": "Akbank Kredi Kartı",
+      "amount": 3494.73,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Credit Card Debt",
+      "notes": "Forecasted credit card payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "6d12d4ce-4cba-4fa4-b0a0-ba5f7904c23e",
+      "name": "Vakıf Ek Hesap",
+      "amount": 550.0,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bank Loan",
+      "notes": "Forecasted overdraft payment",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "87d74bf3-ac7b-4c43-a916-a8cbb4e80a33",
+      "name": "Salary",
+      "amount": 70000.0,
+      "transaction_type": "income",
+      "date": "2025-04-01T00:00:00",
+      "category": "Salary",
+      "notes": "Forecasted monthly salary",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "7b069fe5-dd58-47c7-bc38-b87244d1838c",
+      "name": "Prim",
+      "amount": 14000.0,
+      "transaction_type": "income",
+      "date": "2025-04-01T00:00:00",
+      "category": "Bonus",
+      "notes": "Forecasted quarterly bonus",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "2ed1f125-6983-42d9-80cf-93f710ea7f78",
+      "name": "Annem-Babam",
+      "amount": 15000.0,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Parental Expenses",
+      "notes": "Forecasted monthly parental support",
+      "realized": false,
+      "actual_transaction_id": null
+    },
+    {
+      "id": "93402787-fb97-44be-825e-feb4e9658752",
+      "name": "Enişte Borç",
+      "amount": 25000.0,
+      "transaction_type": "expense",
+      "date": "2025-04-01T00:00:00",
+      "category": "Debt to Person",
+      "notes": "Forecasted debt repayment",
+      "realized": false,
+      "actual_transaction_id": null
+    }
+  ]

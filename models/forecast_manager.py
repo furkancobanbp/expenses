@@ -2,7 +2,7 @@ import json
 import os
 import uuid
 from datetime import datetime
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 from .transaction import Transaction, TransactionType
 
@@ -11,18 +11,28 @@ class ForecastTransaction(Transaction):
     Extension of Transaction for forecast data.
     Includes additional fields for notes and actual transaction ID for linking.
     """
+    def __init__(self, id: str, name: str, amount: float, transaction_type: TransactionType,
+                 date: datetime, category: str = None, notes: str = "", 
+                 actual_transaction_id: str = None, realized: bool = False):
+        super().__init__(id, name, amount, transaction_type, date, category)
+        self.notes = notes
+        self.actual_transaction_id = actual_transaction_id
+        self.realized = realized
+        
     @classmethod
     def from_dict(cls, data):
         """Create a ForecastTransaction instance from a dictionary"""
         instance = super().from_dict(data)
         instance.notes = data.get("notes", "")
         instance.actual_transaction_id = data.get("actual_transaction_id", None)
+        instance.realized = data.get("realized", False)
         return instance
     
     def to_dict(self):
         """Convert to dictionary for JSON serialization"""
         data = super().to_dict()
         data["notes"] = getattr(self, "notes", "")
+        data["realized"] = getattr(self, "realized", False)
         if hasattr(self, "actual_transaction_id") and self.actual_transaction_id:
             data["actual_transaction_id"] = self.actual_transaction_id
         return data
@@ -162,6 +172,209 @@ class ForecastManager:
             "income_categories": income_categories,
             "expense_categories": expense_categories
         }
+    
+    def find_matching_forecast(self, transaction: Transaction) -> Optional[ForecastTransaction]:
+        """Find a matching forecast for a transaction"""
+        # Find forecasts for the same month/year
+        forecasts = self.get_forecasts_by_month(transaction.date.year, transaction.date.month)
+        
+        # Look for a match on category and transaction type
+        matches = []
+        for forecast in forecasts:
+            # Skip already realized forecasts
+            if getattr(forecast, "realized", False):
+                continue
+                
+            # Check if the category and type match
+            if (forecast.category == transaction.category and 
+                forecast.transaction_type == transaction.transaction_type):
+                matches.append(forecast)
+        
+        if not matches:
+            return None
+            
+        # Find the closest match by amount
+        closest_match = min(matches, key=lambda f: abs(f.amount - transaction.amount))
+        
+        # Only consider a match if the amount is within 10% difference
+        if abs(closest_match.amount - transaction.amount) <= (closest_match.amount * 0.1):
+            return closest_match
+            
+        return None
+    
+    def mark_forecast_realized(self, forecast_id: str, transaction_id: str) -> bool:
+        """Mark a forecast as realized with a specific transaction"""
+        for forecast in self.forecasts:
+            if forecast.id == forecast_id:
+                forecast.actual_transaction_id = transaction_id
+                forecast.realized = True
+                self.save_data()
+                return True
+        return False
+    
+    def link_to_actual(self, forecast_id: str, actual_id: str) -> bool:
+        """Link a forecast transaction to its actual transaction"""
+        for forecast in self.forecasts:
+            if forecast.id == forecast_id:
+                forecast.actual_transaction_id = actual_id
+                forecast.realized = True
+                self.save_data()
+                return True
+        return False
+    
+    def create_forecast_from_transaction(self, transaction: Transaction) -> ForecastTransaction:
+        """Create a new forecast based on an existing transaction"""
+        forecast = ForecastTransaction.from_dict({
+            "id": str(uuid.uuid4()),
+            "name": f"[Forecast] {transaction.name}",
+            "amount": transaction.amount,
+            "transaction_type": transaction.transaction_type.value,
+            "category": transaction.category,
+            "date": transaction.date.isoformat(),
+            "notes": f"Created from transaction {transaction.id}"
+        })
+        
+        self.forecasts.append(forecast)
+        self.save_data()
+        return forecast
+    
+    def bulk_convert_to_forecasts(self, transactions: List[Transaction]) -> int:
+        """Convert a list of transactions to forecasts and return the count"""
+        count = 0
+        for transaction in transactions:
+            self.create_forecast_from_transaction(transaction)
+            count += 1
+        return count
+    
+    def check_realization_against_actual(self, actual_transactions: List[Transaction]) -> Tuple[int, int]:
+        """
+        Check which forecasts have been realized by actual transactions
+        Returns a tuple of (matched_count, total_forecasts)
+        """
+        unrealized_forecasts = [f for f in self.forecasts if not getattr(f, "realized", False)]
+        
+        matched_count = 0
+        for transaction in actual_transactions:
+            matching_forecast = self.find_matching_forecast(transaction)
+            if matching_forecast:
+                self.mark_forecast_realized(matching_forecast.id, transaction.id)
+                matched_count += 1
+                
+        return (matched_count, len(unrealized_forecasts))
+    
+    def get_monthly_forecast_summary(self, year: int, month: int) -> Dict:
+        """Alias for get_monthly_summary"""
+        return self.get_monthly_summary(year, month)
+    
+    def get_comparison_data(self, actual_data: Dict, year: int, month: int) -> Dict:
+        """Get comparison data between forecast and actual"""
+        forecast_summary = self.get_monthly_summary(year, month)
+        
+        # Calculate variances
+        income_variance = actual_data["total_income"] - forecast_summary["total_income"]
+        income_variance_pct = (income_variance / forecast_summary["total_income"] * 100) if forecast_summary["total_income"] > 0 else 0
+        
+        expense_variance = actual_data["total_expenses"] - forecast_summary["total_expenses"]
+        expense_variance_pct = (expense_variance / forecast_summary["total_expenses"] * 100) if forecast_summary["total_expenses"] > 0 else 0
+        
+        net_variance = actual_data["net_worth"] - forecast_summary["net_worth"]
+        net_variance_pct = (net_variance / abs(forecast_summary["net_worth"]) * 100) if forecast_summary["net_worth"] != 0 else 0
+        
+        return {
+            "income": {
+                "forecast": forecast_summary["total_income"],
+                "actual": actual_data["total_income"],
+                "variance": income_variance,
+                "variance_pct": income_variance_pct
+            },
+            "expenses": {
+                "forecast": forecast_summary["total_expenses"],
+                "actual": actual_data["total_expenses"],
+                "variance": expense_variance,
+                "variance_pct": expense_variance_pct
+            },
+            "net_worth": {
+                "forecast": forecast_summary["net_worth"],
+                "actual": actual_data["net_worth"],
+                "variance": net_variance,
+                "variance_pct": net_variance_pct
+            }
+        }
+    
+    def get_category_comparison(self, actual_transactions: List[Transaction], 
+                             year: int, month: int) -> Dict:
+        """Get category-level comparison between forecast and actual"""
+        # Group forecasts by category
+        forecasts = self.get_forecasts_by_month(year, month)
+        forecast_categories = {"income": {}, "expense": {}}
+        
+        for forecast in forecasts:
+            category = forecast.category if forecast.category else "Uncategorized"
+            if forecast.transaction_type == TransactionType.INCOME:
+                if category in forecast_categories["income"]:
+                    forecast_categories["income"][category] += forecast.amount
+                else:
+                    forecast_categories["income"][category] = forecast.amount
+            else:
+                if category in forecast_categories["expense"]:
+                    forecast_categories["expense"][category] += forecast.amount
+                else:
+                    forecast_categories["expense"][category] = forecast.amount
+        
+        # Group actual transactions by category
+        actual_categories = {"income": {}, "expense": {}}
+        
+        for transaction in actual_transactions:
+            category = transaction.category if transaction.category else "Uncategorized"
+            if transaction.transaction_type == TransactionType.INCOME:
+                if category in actual_categories["income"]:
+                    actual_categories["income"][category] += transaction.amount
+                else:
+                    actual_categories["income"][category] = transaction.amount
+            else:
+                if category in actual_categories["expense"]:
+                    actual_categories["expense"][category] += transaction.amount
+                else:
+                    actual_categories["expense"][category] = transaction.amount
+        
+        # Calculate variances
+        category_variances = {"income": {}, "expense": {}}
+        
+        # Income categories
+        all_income_categories = set(list(forecast_categories["income"].keys()) + 
+                                   list(actual_categories["income"].keys()))
+        
+        for category in all_income_categories:
+            forecast_amount = forecast_categories["income"].get(category, 0)
+            actual_amount = actual_categories["income"].get(category, 0)
+            variance = actual_amount - forecast_amount
+            variance_pct = (variance / forecast_amount * 100) if forecast_amount > 0 else 0
+            
+            category_variances["income"][category] = {
+                "forecast": forecast_amount,
+                "actual": actual_amount,
+                "variance": variance,
+                "variance_pct": variance_pct
+            }
+        
+        # Expense categories
+        all_expense_categories = set(list(forecast_categories["expense"].keys()) + 
+                                    list(actual_categories["expense"].keys()))
+        
+        for category in all_expense_categories:
+            forecast_amount = forecast_categories["expense"].get(category, 0)
+            actual_amount = actual_categories["expense"].get(category, 0)
+            variance = actual_amount - forecast_amount
+            variance_pct = (variance / forecast_amount * 100) if forecast_amount > 0 else 0
+            
+            category_variances["expense"][category] = {
+                "forecast": forecast_amount,
+                "actual": actual_amount,
+                "variance": variance,
+                "variance_pct": variance_pct
+            }
+        
+        return category_variances
     
     def compare_with_actual(self, finance_manager, year: int, month: int) -> Dict:
         """Compare forecast data with actual data for a specific month"""
