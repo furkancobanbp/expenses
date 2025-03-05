@@ -178,6 +178,21 @@ class Dashboard(QWidget):
         main_layout.addLayout(cards_layout)
         
         # Create tab widget for charts
+        charts_tab = self.update_dashboard_tab_widget()
+        
+        # Add charts tab to main layout with stretch
+        main_layout.addWidget(charts_tab, 1)
+        
+        # Connect signals
+        self.year_combo.currentIndexChanged.connect(self.on_date_changed)
+        self.month_combo.currentIndexChanged.connect(self.on_date_changed)
+        
+        # Initial refresh
+        self.refresh_charts()
+        
+    def update_dashboard_tab_widget(self):
+        """Update tab widget to add forecast comparison tab"""
+        # Create tab widget for charts
         charts_tab = QTabWidget()
         charts_tab.setDocumentMode(True)
         
@@ -213,7 +228,7 @@ class Dashboard(QWidget):
         
         charts_tab.addTab(additional_charts_widget, "Insights")
 
-        # Tab 3: Monthly Comparison - NEW FEATURE
+        # Tab 3: Monthly Comparison 
         comparison_widget = QWidget()
         comparison_layout = QGridLayout(comparison_widget)
         comparison_layout.setContentsMargins(5, 5, 5, 5)
@@ -229,7 +244,7 @@ class Dashboard(QWidget):
         
         charts_tab.addTab(comparison_widget, "Monthly Comparison")
         
-        # Tab 4: Financial Forecast - NEW FEATURE
+        # Tab 4: Financial Forecast
         forecast_widget = QWidget()
         forecast_layout = QGridLayout(forecast_widget)
         forecast_layout.setContentsMargins(5, 5, 5, 5)
@@ -245,16 +260,32 @@ class Dashboard(QWidget):
         
         charts_tab.addTab(forecast_widget, "Financial Forecast")
         
-        # Add charts tab to main layout with stretch
-        main_layout.addWidget(charts_tab, 1)
+        # NEW Tab 5: Forecast vs Actual Comparison
+        forecast_actual_widget = QWidget()
+        forecast_actual_layout = QGridLayout(forecast_actual_widget)
+        forecast_actual_layout.setContentsMargins(5, 5, 5, 5)
+        forecast_actual_layout.setSpacing(10)
         
-        # Connect signals
-        self.year_combo.currentIndexChanged.connect(self.on_date_changed)
-        self.month_combo.currentIndexChanged.connect(self.on_date_changed)
+        # Forecast vs Actual Summary Chart
+        self.forecast_actual_summary_canvas = MplCanvas(width=5, height=3)
+        forecast_actual_layout.addWidget(self.forecast_actual_summary_canvas, 0, 0)
         
-        # Initial refresh
-        self.refresh_charts()
+        # Forecast vs Actual Category Chart
+        self.forecast_actual_category_canvas = MplCanvas(width=5, height=3)
+        forecast_actual_layout.addWidget(self.forecast_actual_category_canvas, 0, 1)
         
+        # Forecast Accuracy Timeline Chart
+        self.forecast_accuracy_canvas = MplCanvas(width=5, height=3)
+        forecast_actual_layout.addWidget(self.forecast_accuracy_canvas, 1, 0)
+        
+        # Forecast vs Actual Variance Chart
+        self.forecast_variance_canvas = MplCanvas(width=5, height=3)
+        forecast_actual_layout.addWidget(self.forecast_variance_canvas, 1, 1)
+        
+        charts_tab.addTab(forecast_actual_widget, "Forecast Analysis")
+        
+        return charts_tab
+    
     def update_year_combo(self):
         """Update the years in the combo box based on transaction history"""
         self.year_combo.clear()
@@ -298,17 +329,38 @@ class Dashboard(QWidget):
             self.net_value.setStyleSheet("font-size: 16px; font-weight: bold; color: #c62828;")
         self.net_value.setText(f"{net_worth:.2f} ₺")
         
-        # Update all charts
+        # Update all original charts
         self.update_monthly_chart(year)
         self.update_cumulative_chart()
         self.update_trend_chart(year)
         self.update_category_chart(year, month)
         
-        # Update new charts
+        # Update comparison charts
         self.update_comparison_chart(year, month)
         self.update_category_comparison_chart(year, month)
         self.update_forecast_chart(year, month)
         self.update_savings_forecast_chart(year, month)
+        
+        # Update new forecast comparison charts
+        self.update_forecast_actual_charts()
+        
+    def update_forecast_actual_charts(self):
+        """Update the forecast vs actual comparison charts"""
+        # Get selected year and month
+        year = self.year_combo.currentData()
+        month = self.month_combo.currentData()
+        
+        if year is None or month is None:
+            return
+            
+        # Get comparison data
+        comparison_data = self.controller.compare_forecast_vs_actual(year, month)
+        
+        # Update the charts
+        self.update_forecast_actual_summary_chart(comparison_data, year, month)
+        self.update_forecast_actual_category_chart(comparison_data, year, month)
+        self.update_forecast_accuracy_chart(year, month)
+        self.update_forecast_variance_chart(comparison_data, year, month)
         
     def update_monthly_chart(self, year):
         """Update the monthly breakdown chart - IMPROVED VERSION"""
@@ -744,7 +796,7 @@ class Dashboard(QWidget):
         self.category_canvas.draw()
         
     def update_comparison_chart(self, year, month):
-        """NEW FEATURE: Monthly Comparison Chart that compares expenses with previous and next month"""
+        """Monthly Comparison Chart that compares expenses with previous and next month"""
         # Clear previous plot
         self.comparison_canvas.axes.clear()
         
@@ -847,7 +899,7 @@ class Dashboard(QWidget):
         self.comparison_canvas.draw()
         
     def update_category_comparison_chart(self, year, month):
-        """NEW FEATURE: Compare expense categories between current, previous, and next month"""
+        """Compare expense categories between current, previous, and next month"""
         # Clear previous plot
         self.category_comparison_canvas.axes.clear()
         
@@ -969,7 +1021,7 @@ class Dashboard(QWidget):
         self.category_comparison_canvas.draw()
         
     def update_forecast_chart(self, year, month):
-        """NEW FEATURE: Financial forecast chart for next 6 months based on past trends"""
+        """Financial forecast chart for next 6 months based on past trends"""
         # Clear previous plot
         self.forecast_canvas.axes.clear()
         
@@ -1131,7 +1183,7 @@ class Dashboard(QWidget):
         self.forecast_canvas.draw()
         
     def update_savings_forecast_chart(self, year, month):
-        """NEW FEATURE: Savings and financial goals simulation chart"""
+        """Savings and financial goals simulation chart"""
         # Clear previous plot
         self.savings_forecast_canvas.axes.clear()
         
@@ -1315,3 +1367,454 @@ class Dashboard(QWidget):
         
         self.savings_forecast_canvas.fig.tight_layout()
         self.savings_forecast_canvas.draw()
+
+    def update_forecast_actual_summary_chart(self, comparison_data, year, month):
+        """Update the forecast vs actual summary chart"""
+        # Clear previous plot
+        self.forecast_actual_summary_canvas.axes.clear()
+        
+        # Extract data
+        income_data = comparison_data['summary']['income']
+        expense_data = comparison_data['summary']['expenses']
+        net_data = comparison_data['summary']['net_worth']
+        
+        # Set positions for bars
+        x = np.arange(3)  # 3 categories: Income, Expenses, Net
+        width = 0.35      # Width of bars
+        
+        # Create grouped bar chart
+        self.forecast_actual_summary_canvas.axes.bar(
+            x - width/2, 
+            [income_data['forecast'], expense_data['forecast'], net_data['forecast']], 
+            width, 
+            color=['#81c784', '#e57373', '#64b5f6'], 
+            alpha=0.7,
+            label='Forecast'
+        )
+        
+        self.forecast_actual_summary_canvas.axes.bar(
+            x + width/2, 
+            [income_data['actual'], expense_data['actual'], net_data['actual']], 
+            width, 
+            color=['#2e7d32', '#c62828', '#1565c0'], 
+            alpha=0.9,
+            label='Actual'
+        )
+        
+        # Add data labels
+        for i, (forecast, actual) in enumerate(zip(
+            [income_data['forecast'], expense_data['forecast'], net_data['forecast']],
+            [income_data['actual'], expense_data['actual'], net_data['actual']]
+        )):
+            # Forecast label
+            self.forecast_actual_summary_canvas.axes.text(
+                x[i] - width/2, forecast, 
+                f"{forecast:,.0f}",
+                ha='center', va='bottom',
+                fontsize=8, fontweight='bold',
+                color='#333333'
+            )
+            
+            # Actual label
+            self.forecast_actual_summary_canvas.axes.text(
+                x[i] + width/2, actual, 
+                f"{actual:,.0f}",
+                ha='center', va='bottom',
+                fontsize=8, fontweight='bold',
+                color='#333333'
+            )
+            
+            # Add variance label
+            variance = income_data['variance'] if i == 0 else expense_data['variance'] if i == 1 else net_data['variance']
+            variance_pct = income_data['variance_pct'] if i == 0 else expense_data['variance_pct'] if i == 1 else net_data['variance_pct']
+            
+            # Determine color based on whether the variance is good or bad
+            if (i == 0 and variance >= 0) or (i == 1 and variance <= 0) or (i == 2 and variance >= 0):
+                variance_color = '#2e7d32'  # Green for positive
+            else:
+                variance_color = '#c62828'  # Red for negative
+            
+            self.forecast_actual_summary_canvas.axes.text(
+                x[i], min(forecast, actual) / 2,
+                f"{variance:+,.0f} ({variance_pct:+.1f}%)",
+                ha='center', va='center',
+                fontsize=8, fontweight='bold',
+                color=variance_color,
+                bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="lightgrey", alpha=0.8)
+            )
+        
+        # Add labels and title
+        self.forecast_actual_summary_canvas.axes.set_title(
+            f'Forecast vs Actual Summary - {calendar.month_name[month]} {year}',
+            fontsize=11, fontweight='bold', pad=8
+        )
+        
+        self.forecast_actual_summary_canvas.axes.set_xticks(x)
+        self.forecast_actual_summary_canvas.axes.set_xticklabels(['Income', 'Expenses', 'Net Worth'])
+        self.forecast_actual_summary_canvas.axes.set_ylabel('Amount (₺)', fontsize=9)
+        
+        # Add zero line
+        self.forecast_actual_summary_canvas.axes.axhline(y=0, color='grey', linestyle='-', alpha=0.3, linewidth=1)
+        
+        # Add legend
+        self.forecast_actual_summary_canvas.axes.legend(fontsize=8)
+        
+        # Update layout
+        self.forecast_actual_summary_canvas.fig.tight_layout()
+        self.forecast_actual_summary_canvas.draw()
+
+    def update_forecast_actual_category_chart(self, comparison_data, year, month):
+        """Update the forecast vs actual category chart"""
+        # Clear previous plot
+        self.forecast_actual_category_canvas.axes.clear()
+        
+        # We'll create separate charts for income and expenses
+        # First, let's prepare the data
+        income_categories = comparison_data['income_categories']
+        expense_categories = comparison_data['expense_categories']
+        
+        # For this example, we'll focus on expense categories
+        # Sort categories by actual amount
+        sorted_expense_categories = sorted(
+            expense_categories.items(),
+            key=lambda x: x[1]['actual'],
+            reverse=True
+        )
+        
+        # Limit to top 6 categories
+        if len(sorted_expense_categories) > 6:
+            top_categories = sorted_expense_categories[:5]
+            
+            # Create an "Other" category for the rest
+            other_forecast = sum(cat[1]['forecast'] for cat in sorted_expense_categories[5:])
+            other_actual = sum(cat[1]['actual'] for cat in sorted_expense_categories[5:])
+            
+            top_categories.append((
+                'Other',
+                {
+                    'forecast': other_forecast,
+                    'actual': other_actual,
+                    'variance': other_actual - other_forecast,
+                    'variance_pct': ((other_actual - other_forecast) / other_forecast * 100) if other_forecast > 0 else 0
+                }
+            ))
+        else:
+            top_categories = sorted_expense_categories
+        
+        # Extract data for plotting
+        categories = [cat[0] for cat in top_categories]
+        forecast_values = [cat[1]['forecast'] for cat in top_categories]
+        actual_values = [cat[1]['actual'] for cat in top_categories]
+        
+        # Set positions for bars
+        x = np.arange(len(categories))
+        width = 0.35
+        
+        # Create grouped bar chart
+        self.forecast_actual_category_canvas.axes.bar(
+            x - width/2,
+            forecast_values,
+            width,
+            color='#e57373',
+            alpha=0.7,
+            label='Forecast'
+        )
+        
+        self.forecast_actual_category_canvas.axes.bar(
+            x + width/2,
+            actual_values,
+            width,
+            color='#c62828',
+            alpha=0.9,
+            label='Actual'
+        )
+        
+        # Add data labels for large values
+        for i, (forecast, actual) in enumerate(zip(forecast_values, actual_values)):
+            # Only add labels if the value is significant
+            if forecast > max(forecast_values) * 0.1:
+                self.forecast_actual_category_canvas.axes.text(
+                    x[i] - width/2, forecast,
+                    f"{forecast:,.0f}",
+                    ha='center', va='bottom',
+                    fontsize=7, rotation=90 if forecast > max(forecast_values) * 0.7 else 0
+                )
+            
+            if actual > max(actual_values) * 0.1:
+                self.forecast_actual_category_canvas.axes.text(
+                    x[i] + width/2, actual,
+                    f"{actual:,.0f}",
+                    ha='center', va='bottom',
+                    fontsize=7, rotation=90 if actual > max(actual_values) * 0.7 else 0
+                )
+        
+        # Add labels and title
+        self.forecast_actual_category_canvas.axes.set_title(
+            f'Top Expense Categories: Forecast vs Actual - {calendar.month_name[month]} {year}',
+            fontsize=11, fontweight='bold', pad=8
+        )
+        
+        self.forecast_actual_category_canvas.axes.set_xticks(x)
+        self.forecast_actual_category_canvas.axes.set_xticklabels(categories, rotation=45, ha='right')
+        self.forecast_actual_category_canvas.axes.set_ylabel('Amount (₺)', fontsize=9)
+        
+        # Add legend
+        self.forecast_actual_category_canvas.axes.legend(fontsize=8)
+        
+        # Update layout
+        self.forecast_actual_category_canvas.fig.tight_layout()
+        self.forecast_actual_category_canvas.draw()
+
+    def update_forecast_accuracy_chart(self, year, month):
+        """Update the forecast accuracy timeline chart"""
+        # Clear previous plot
+        self.forecast_accuracy_canvas.axes.clear()
+        
+        # We'll create a chart showing forecast accuracy over the last 6 months
+        # including the current month
+        
+        # Calculate range of months to show
+        end_date = datetime(year, month, 1)
+        dates = []
+        accuracy_income = []
+        accuracy_expense = []
+        accuracy_net = []
+        
+        # Get data for last 6 months
+        for i in range(5, -1, -1):
+            # Calculate the month to display
+            display_date = end_date - relativedelta(months=i)
+            display_year = display_date.year
+            display_month = display_date.month
+            
+            # Get comparison data for this month
+            comparison_data = self.controller.compare_forecast_vs_actual(display_year, display_month)
+            
+            # Check if we have both forecast and actual data
+            has_forecast_income = comparison_data['summary']['income']['forecast'] > 0
+            has_forecast_expense = comparison_data['summary']['expenses']['forecast'] > 0
+            
+            # If we have data, calculate accuracy
+            if has_forecast_income:
+                income_accuracy = 100 - abs(comparison_data['summary']['income']['variance_pct'])
+                income_accuracy = max(0, min(100, income_accuracy))  # Clamp between 0-100%
+            else:
+                income_accuracy = None
+                
+            if has_forecast_expense:
+                expense_accuracy = 100 - abs(comparison_data['summary']['expenses']['variance_pct'])
+                expense_accuracy = max(0, min(100, expense_accuracy))  # Clamp between 0-100%
+            else:
+                expense_accuracy = None
+            
+            if has_forecast_income and has_forecast_expense:
+                net_accuracy = 100 - abs(comparison_data['summary']['net_worth']['variance_pct'])
+                net_accuracy = max(0, min(100, net_accuracy))  # Clamp between 0-100%
+            else:
+                net_accuracy = None
+            
+            # Add to lists
+            dates.append(display_date)
+            accuracy_income.append(income_accuracy)
+            accuracy_expense.append(expense_accuracy)
+            accuracy_net.append(net_accuracy)
+        
+        # Create the line chart
+        # Plot income accuracy
+        self.forecast_accuracy_canvas.axes.plot(
+            dates, accuracy_income, 'o-',
+            color='#4CAF50', linewidth=2, marker='o', markersize=6,
+            label='Income Accuracy'
+        )
+        
+        # Plot expense accuracy
+        self.forecast_accuracy_canvas.axes.plot(
+            dates, accuracy_expense, 'o-',
+            color='#F44336', linewidth=2, marker='o', markersize=6,
+            label='Expense Accuracy'
+        )
+        
+        # Plot net worth accuracy
+        self.forecast_accuracy_canvas.axes.plot(
+            dates, accuracy_net, 'o-',
+            color='#2196F3', linewidth=2, marker='o', markersize=6,
+            label='Net Worth Accuracy'
+        )
+        
+        # Add target line at 100%
+        self.forecast_accuracy_canvas.axes.axhline(
+            y=100, color='grey', linestyle='--', alpha=0.5, 
+            linewidth=1, label='Perfect Accuracy'
+        )
+        
+        # Add colored zones
+        self.forecast_accuracy_canvas.axes.axhspan(
+            90, 100, color='#4CAF50', alpha=0.1, label='Excellent'
+        )
+        self.forecast_accuracy_canvas.axes.axhspan(
+            75, 90, color='#FFEB3B', alpha=0.1, label='Good'
+        )
+        self.forecast_accuracy_canvas.axes.axhspan(
+            0, 75, color='#F44336', alpha=0.1, label='Needs Improvement'
+        )
+        
+        # Add labels for the current month's accuracy
+        current_idx = len(dates) - 1
+        
+        if accuracy_income[current_idx] is not None:
+            self.forecast_accuracy_canvas.axes.annotate(
+                f"{accuracy_income[current_idx]:.1f}%",
+                xy=(dates[current_idx], accuracy_income[current_idx]),
+                xytext=(5, 0), textcoords="offset points",
+                fontsize=8, fontweight='bold', color='#4CAF50'
+            )
+        
+        if accuracy_expense[current_idx] is not None:
+            self.forecast_accuracy_canvas.axes.annotate(
+                f"{accuracy_expense[current_idx]:.1f}%",
+                xy=(dates[current_idx], accuracy_expense[current_idx]),
+                xytext=(5, 0), textcoords="offset points",
+                fontsize=8, fontweight='bold', color='#F44336'
+            )
+        
+        if accuracy_net[current_idx] is not None:
+            self.forecast_accuracy_canvas.axes.annotate(
+                f"{accuracy_net[current_idx]:.1f}%",
+                xy=(dates[current_idx], accuracy_net[current_idx]),
+                xytext=(5, 0), textcoords="offset points",
+                fontsize=8, fontweight='bold', color='#2196F3'
+            )
+        
+        # Add title and labels
+        self.forecast_accuracy_canvas.axes.set_title(
+            'Forecast Accuracy Trend (Last 6 Months)',
+            fontsize=11, fontweight='bold', pad=8
+        )
+        self.forecast_accuracy_canvas.axes.set_xlabel('Month', fontsize=9)
+        self.forecast_accuracy_canvas.axes.set_ylabel('Accuracy (%)', fontsize=9)
+        
+        # Set y-axis range
+        self.forecast_accuracy_canvas.axes.set_ylim(0, 105)
+        
+        # Format x-axis dates
+        self.forecast_accuracy_canvas.axes.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+        
+        # Rotate date labels
+        plt.setp(self.forecast_accuracy_canvas.axes.get_xticklabels(), rotation=45, ha='right')
+        
+        # Add legend
+        self.forecast_accuracy_canvas.axes.legend(fontsize=8, loc='lower left')
+        
+        # Update layout
+        self.forecast_accuracy_canvas.fig.tight_layout()
+        self.forecast_accuracy_canvas.draw()
+
+    def update_forecast_variance_chart(self, comparison_data, year, month):
+        """Update the forecast variance chart - showing where forecasts were off"""
+        # Clear previous plot
+        self.forecast_variance_canvas.axes.clear()
+        
+        # Extract income and expense category data
+        income_categories = comparison_data['income_categories']
+        expense_categories = comparison_data['expense_categories']
+        
+        # Calculate variances
+        income_variances = [(cat, data['variance_pct']) for cat, data in income_categories.items()]
+        expense_variances = [(cat, data['variance_pct']) for cat, data in expense_categories.items()]
+        
+        # Sort by absolute variance percentage
+        income_variances.sort(key=lambda x: abs(x[1]), reverse=True)
+        expense_variances.sort(key=lambda x: abs(x[1]), reverse=True)
+        
+        # Limit to top 5 variances for each type
+        income_variances = income_variances[:5]
+        expense_variances = expense_variances[:5]
+        
+        # Combine the lists
+        all_variances = income_variances + expense_variances
+        
+        # If no variances, show a message
+        if not all_variances:
+            self.forecast_variance_canvas.axes.text(
+                0.5, 0.5, 'No forecast variance data available',
+                ha='center', va='center', fontsize=11,
+                transform=self.forecast_variance_canvas.axes.transAxes
+            )
+            self.forecast_variance_canvas.draw()
+            return
+        
+        # Extract categories and variance percentages
+        categories = [item[0] for item in all_variances]
+        variances = [item[1] for item in all_variances]
+        
+        # Determine colors based on variance type and direction
+        colors = []
+        for i, (cat, var) in enumerate(all_variances):
+            if i < len(income_variances):  # Income category
+                colors.append('#4CAF50' if var >= 0 else '#F44336')  # Green if positive, red if negative
+            else:  # Expense category
+                colors.append('#4CAF50' if var <= 0 else '#F44336')  # Green if negative, red if positive
+        
+        # Create horizontal bar chart
+        y_pos = np.arange(len(categories))
+        
+        bars = self.forecast_variance_canvas.axes.barh(
+            y_pos, variances, align='center', alpha=0.7, color=colors
+        )
+        
+        # Add data labels
+        for i, bar in enumerate(bars):
+            width = bar.get_width()
+            label_x_pos = width + (5 if width >= 0 else -5)
+            align = 'left' if width >= 0 else 'right'
+            
+            self.forecast_variance_canvas.axes.text(
+                label_x_pos, bar.get_y() + bar.get_height()/2,
+                f"{width:+.1f}%",
+                va='center', ha=align,
+                fontsize=8, fontweight='bold',
+                color=colors[i]
+            )
+        
+        # Add category type indicators
+        for i, y in enumerate(y_pos):
+            if i < len(income_variances):  # Income category
+                indicator = "💰"  # Income symbol
+            else:  # Expense category
+                indicator = "💸"  # Expense symbol
+                
+            self.forecast_variance_canvas.axes.text(
+                0, y, f"{indicator} ",
+                va='center', ha='right',
+                fontsize=10
+            )
+        
+        # Add zero line
+        self.forecast_variance_canvas.axes.axvline(
+            x=0, color='grey', linestyle='-', alpha=0.3, linewidth=1
+        )
+        
+        # Add title and labels
+        self.forecast_variance_canvas.axes.set_title(
+            f'Largest Forecast Variances - {calendar.month_name[month]} {year}',
+            fontsize=11, fontweight='bold', pad=8
+        )
+        self.forecast_variance_canvas.axes.set_xlabel('Variance (%)', fontsize=9)
+        
+        # Set y-axis ticks and labels
+        self.forecast_variance_canvas.axes.set_yticks(y_pos)
+        self.forecast_variance_canvas.axes.set_yticklabels(categories)
+        
+        # Add explanatory note
+        self.forecast_variance_canvas.axes.text(
+            0.5, -0.1,
+            "💰 Income Categories  |  💸 Expense Categories\n"
+            "Green = Favorable Variance, Red = Unfavorable Variance",
+            ha='center', va='center',
+            fontsize=8, fontweight='bold',
+            transform=self.forecast_variance_canvas.axes.transAxes
+        )
+        
+        # Update layout
+        self.forecast_variance_canvas.fig.tight_layout()
+        self.forecast_variance_canvas.draw()

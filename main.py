@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 
 from models.finance_manager import FinanceManager
 from models.transaction_category_manager import CategoryManager
+from models.forecast_manager import ForecastManager
 from controllers.app_controller import AppController
 from views.main_window import MainWindow
 
@@ -216,7 +217,8 @@ def main():
     # Initialize models, controllers, and views
     finance_manager = FinanceManager("finance_data.json")
     category_manager = CategoryManager("transaction_categories.json")
-    controller = AppController(finance_manager, category_manager)
+    forecast_manager = ForecastManager("forecast_transactions.json")
+    controller = AppController(finance_manager, category_manager, forecast_manager)
     main_window = MainWindow(controller)
     
     # Show main window

@@ -7,6 +7,7 @@ from .entry_form import EntryForm
 from .transaction_list import TransactionList
 from .goals import GoalsTab
 from .category_manager import CategoryManagerView
+from .forecast_management import ForecastManagement  # Import the new ForecastManagement widget
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -16,7 +17,7 @@ class MainWindow(QMainWindow):
         
     def init_ui(self):
         self.setWindowTitle("Personal Finance Manager")
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(1000, 700)  # Increased window size for more complex UI
         
         # Create central widget and single layout
         central_widget = QWidget()
@@ -60,6 +61,10 @@ class MainWindow(QMainWindow):
         self.goals_tab = GoalsTab(self.controller)
         tab_widget.addTab(self.goals_tab, "Financial Goals")
         
+        # Create forecast management tab
+        self.forecast_tab = ForecastManagement(self.controller)
+        tab_widget.addTab(self.forecast_tab, "Forecasts")
+        
         # Create entry form tab
         self.entry_form = EntryForm(self.controller)
         tab_widget.addTab(self.entry_form, "Add Transaction")
@@ -74,6 +79,7 @@ class MainWindow(QMainWindow):
         # Connect signals
         self.entry_form.transaction_added.connect(self.on_transaction_added)
         self.category_manager.categories_changed.connect(self.on_categories_changed)
+        self.forecast_tab.forecast_changed.connect(self.on_forecast_changed)
         
     def on_transaction_added(self):
         # Refresh views when a transaction is added
@@ -82,5 +88,11 @@ class MainWindow(QMainWindow):
         self.goals_tab.refresh_goals()
         
     def on_categories_changed(self):
-        # Refresh the entry form's category list
+        # Refresh the entry form's and forecast form's category lists
         self.entry_form.refresh_categories()
+        self.forecast_tab.forecast_entry.refresh_categories()
+        
+    def on_forecast_changed(self):
+        # Refresh views when a forecast is added, updated, or deleted
+        self.dashboard.refresh_charts()
+        self.forecast_tab.forecast_list.refresh_data()
