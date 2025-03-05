@@ -415,12 +415,9 @@ class ForecastList(QWidget):
         # Hide ID column
         self.income_table.setColumnHidden(0, True)
         
-        # Set column widths
-        self.income_table.setColumnWidth(1, 100)  # Date
-        self.income_table.setColumnWidth(2, 200)  # Name
-        self.income_table.setColumnWidth(3, 150)  # Category
-        self.income_table.setColumnWidth(4, 100)  # Amount
-        self.income_table.setColumnWidth(5, 300)  # Notes
+        # Set all columns to stretch equally
+        for i in range(1, len(headers)):
+            self.income_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
         
         # Expense table
         self.expense_table.setColumnCount(len(headers))
@@ -429,12 +426,9 @@ class ForecastList(QWidget):
         # Hide ID column
         self.expense_table.setColumnHidden(0, True)
         
-        # Set column widths
-        self.expense_table.setColumnWidth(1, 100)  # Date
-        self.expense_table.setColumnWidth(2, 200)  # Name
-        self.expense_table.setColumnWidth(3, 150)  # Category
-        self.expense_table.setColumnWidth(4, 100)  # Amount
-        self.expense_table.setColumnWidth(5, 300)  # Notes
+        # Set all columns to stretch equally
+        for i in range(1, len(headers)):
+            self.expense_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
     
     def refresh_data(self):
         """Refresh the forecast data for the selected period"""
@@ -902,10 +896,9 @@ class ForecastComparison(QWidget):
                 
             income_table.setItem(i, 3, variance_item)
         
-        income_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        income_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        income_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        income_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        # Set all columns to stretch equally
+        for i in range(4):
+            income_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
         
         income_table.setMaximumHeight(150)
         self.results_layout.addWidget(income_table)
@@ -971,10 +964,9 @@ class ForecastComparison(QWidget):
                 
             expense_table.setItem(i, 3, variance_item)
         
-        expense_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        expense_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        expense_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        expense_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        # Set all columns to stretch equally
+        for i in range(4):
+            expense_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
         
         expense_table.setMaximumHeight(150)
         self.results_layout.addWidget(expense_table)

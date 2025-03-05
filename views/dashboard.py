@@ -276,11 +276,7 @@ class Dashboard(QWidget):
         
         # Forecast Accuracy Timeline Chart
         self.forecast_accuracy_canvas = MplCanvas(width=5, height=3)
-        forecast_actual_layout.addWidget(self.forecast_accuracy_canvas, 1, 0)
-        
-        # Forecast vs Actual Variance Chart
-        self.forecast_variance_canvas = MplCanvas(width=5, height=3)
-        forecast_actual_layout.addWidget(self.forecast_variance_canvas, 1, 1)
+        forecast_actual_layout.addWidget(self.forecast_accuracy_canvas, 1, 0, 1, 2)  # Span two columns
         
         charts_tab.addTab(forecast_actual_widget, "Forecast Analysis")
         
@@ -360,7 +356,6 @@ class Dashboard(QWidget):
         self.update_forecast_actual_summary_chart(comparison_data, year, month)
         self.update_forecast_actual_category_chart(comparison_data, year, month)
         self.update_forecast_accuracy_chart(year, month)
-        self.update_forecast_variance_chart(comparison_data, year, month)
         
     def update_monthly_chart(self, year):
         """Update the monthly breakdown chart - IMPROVED VERSION"""

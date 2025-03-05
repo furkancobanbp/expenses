@@ -20,7 +20,7 @@ class FinanceManager:
         """Load transactions from JSON file"""
         if os.path.exists(self.file_path):
             try:
-                with open(self.file_path, 'r') as file:
+                with open(self.file_path, 'r', encoding='utf-8') as file:
                     data = json.load(file)
                     self.transactions = [Transaction.from_dict(item) for item in data]
             except (json.JSONDecodeError, KeyError) as e:
@@ -33,7 +33,7 @@ class FinanceManager:
         """Load financial goals from JSON file"""
         if os.path.exists(self.goals_path):
             try:
-                with open(self.goals_path, 'r') as file:
+                with open(self.goals_path, 'r', encoding='utf-8') as file:
                     data = json.load(file)
                     self.goals = [FinancialGoal.from_dict(item) for item in data]
             except (json.JSONDecodeError, KeyError) as e:
@@ -44,13 +44,13 @@ class FinanceManager:
     
     def save_data(self):
         """Save transactions to JSON file"""
-        with open(self.file_path, 'w') as file:
-            json.dump([t.to_dict() for t in self.transactions], file, indent=2)
+        with open(self.file_path, 'w', encoding='utf-8') as file:
+            json.dump([t.to_dict() for t in self.transactions], file, indent=2, ensure_ascii=False)
     
     def save_goals(self):
         """Save financial goals to JSON file"""
-        with open(self.goals_path, 'w') as file:
-            json.dump([g.to_dict() for g in self.goals], file, indent=2)
+        with open(self.goals_path, 'w', encoding='utf-8') as file:
+            json.dump([g.to_dict() for g in self.goals], file, indent=2, ensure_ascii=False)
     
     def add_transaction(self, name: str, amount: float, 
                     category_name: str, category_type: TransactionType, 

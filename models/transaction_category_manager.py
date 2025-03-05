@@ -22,19 +22,19 @@ class CategoryManager:
         """Load categories from JSON file"""
         if os.path.exists(self.file_path):
             try:
-                with open(self.file_path, 'r') as file:
+                with open(self.file_path, 'r', encoding='utf-8') as file:
                     self.categories = json.load(file)
             except (json.JSONDecodeError, IOError) as e:
                 print(f"Error loading categories: {e}")
                 self.categories = []
         else:
             self.categories = []
-    
+
     def save_categories(self):
         """Save categories to JSON file"""
         try:
-            with open(self.file_path, 'w') as file:
-                json.dump(self.categories, file, indent=2)
+            with open(self.file_path, 'w', encoding='utf-8') as file:
+                json.dump(self.categories, file, indent=2, ensure_ascii=False)
         except IOError as e:
             print(f"Error saving categories: {e}")
     

@@ -25,7 +25,7 @@ def main():
         
         /* Typography */
         QWidget {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', 'Arial Unicode MS', Arial, sans-serif;
             color: #212529;
         }
         
