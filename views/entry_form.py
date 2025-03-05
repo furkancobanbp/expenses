@@ -36,7 +36,7 @@ class EntryForm(QWidget):
         name_label = QLabel("Transaction Name:")
         name_label.setStyleSheet("font-weight: 500;")
         self.name_edit = QLineEdit()
-        self.name_edit.setPlaceholderText("e.g., Salary, Rent, Groceries")
+        self.name_edit.setPlaceholderText("e.g., Monthly Salary, Rent Payment")
         self.name_edit.setFixedHeight(30)
         
         form_grid.addWidget(name_label, 0, 0)
@@ -52,16 +52,20 @@ class EntryForm(QWidget):
         form_grid.addWidget(amount_label, 1, 0)
         form_grid.addWidget(self.amount_edit, 1, 1)
         
-        # Transaction type
-        type_label = QLabel("Type:")
-        type_label.setStyleSheet("font-weight: 500;")
-        self.type_combo = QComboBox()
-        self.type_combo.addItem(TransactionType.INCOME.value, TransactionType.INCOME)
-        self.type_combo.addItem(TransactionType.EXPENSE.value, TransactionType.EXPENSE)
-        self.type_combo.setFixedHeight(30)
+        # Transaction category
+        category_label = QLabel("Category:")
+        category_label.setStyleSheet("font-weight: 500;")
+        self.category_combo = QComboBox()
+        self.category_combo.setFixedHeight(30)
         
-        form_grid.addWidget(type_label, 2, 0)
-        form_grid.addWidget(self.type_combo, 2, 1)
+        # Load categories from controller
+        self.refresh_categories()
+        
+        # Set background color based on whether category is income or expense
+        self.category_combo.currentIndexChanged.connect(self.update_category_style)
+        
+        form_grid.addWidget(category_label, 2, 0)
+        form_grid.addWidget(self.category_combo, 2, 1)
         
         # Date (month and year)
         date_label = QLabel("Date:")
@@ -94,7 +98,13 @@ class EntryForm(QWidget):
         self.add_btn.clicked.connect(self.add_transaction)
         self.add_btn.setFixedHeight(35)
         
+        # Add Manage Categories button
+        self.manage_categories_btn = QPushButton("Manage Categories")
+        self.manage_categories_btn.clicked.connect(self.show_category_manager)
+        self.manage_categories_btn.setFixedHeight(35)
+        
         buttons_layout.addWidget(self.clear_btn)
+        buttons_layout.addWidget(self.manage_categories_btn)
         buttons_layout.addWidget(self.add_btn)
         
         main_layout.addLayout(buttons_layout)
@@ -102,11 +112,71 @@ class EntryForm(QWidget):
         # Add stretch to push all content to the top
         main_layout.addStretch(1)
         
+        # Initial styling update
+        self.update_category_style()
+        
+    def refresh_categories(self):
+        """Refresh the categories in the combobox"""
+        # Save the current selection if any
+        current_category = self.category_combo.currentText() if self.category_combo.count() > 0 else None
+        
+        # Clear the combobox
+        self.category_combo.clear()
+        
+        # Get all categories from controller
+        categories = self.controller.get_all_categories()
+        
+        # Sort categories by type (income first, then expense)
+        sorted_categories = sorted(categories, key=lambda c: c["type"])
+        
+        # Add to combobox with type indication
+        for category in sorted_categories:
+            display_text = f"{category['name']} ({category['type'].capitalize()})"
+            self.category_combo.addItem(display_text, category["name"])
+        
+        # Restore the previous selection if possible
+        if current_category:
+            index = self.category_combo.findText(current_category, Qt.MatchStartsWith)
+            if index >= 0:
+                self.category_combo.setCurrentIndex(index)
+        
+    def update_category_style(self):
+        """Update background color based on whether selected category is income or expense"""
+        if self.category_combo.count() == 0:
+            return
+            
+        # Get the category name
+        current_index = self.category_combo.currentIndex()
+        if current_index < 0:
+            return
+            
+        # Get the display text which includes the type
+        display_text = self.category_combo.currentText()
+        
+        # Check if it's income or expense
+        if "(Income)" in display_text:
+            # Green for income
+            self.category_combo.setStyleSheet("""
+                background-color: #e8f5e9;
+                border: 1px solid #81c784;
+                border-radius: 4px;
+                padding: 5px;
+            """)
+        else:
+            # Red for expense
+            self.category_combo.setStyleSheet("""
+                background-color: #ffebee;
+                border: 1px solid #e57373;
+                border-radius: 4px;
+                padding: 5px;
+            """)
+        
     def clear_form(self):
         """Clear all form fields"""
         self.name_edit.clear()
         self.amount_edit.clear()
-        self.type_combo.setCurrentIndex(0)
+        if self.category_combo.count() > 0:
+            self.category_combo.setCurrentIndex(0)
         self.date_edit.setDate(QDate.currentDate())
         
     def add_transaction(self):
@@ -127,8 +197,13 @@ class EntryForm(QWidget):
             QMessageBox.warning(self, "Input Error", "Please enter a valid positive amount.")
             return
         
-        # Get transaction type
-        transaction_type = self.type_combo.currentData()
+        # Validate category selection
+        if self.category_combo.count() == 0:
+            QMessageBox.warning(self, "Input Error", "No categories available. Please add categories first.")
+            return
+            
+        # Get category name (stored as user data)
+        category_name = self.category_combo.currentData()
         
         # Get date
         qdate = self.date_edit.date()
@@ -136,7 +211,7 @@ class EntryForm(QWidget):
         
         # Add transaction
         try:
-            self.controller.add_transaction(name, amount, transaction_type, date)
+            self.controller.add_transaction(name, amount, category_name, date)
             
             # Show success message
             QMessageBox.information(self, "Success", "Transaction added successfully!")
@@ -149,3 +224,9 @@ class EntryForm(QWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to add transaction: {str(e)}")
+            
+    def show_category_manager(self):
+        """Show the category manager dialog"""
+        # This will be implemented in the main window to show the category manager tab
+        # We'll emit a signal that the main window will connect to
+        self.transaction_added.emit()  # Reuse the same signal to trigger UI updates

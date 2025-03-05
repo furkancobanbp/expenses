@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
 
 from models.finance_manager import FinanceManager
+from models.transaction_category_manager import CategoryManager
 from controllers.app_controller import AppController
 from views.main_window import MainWindow
 
@@ -203,11 +204,19 @@ def main():
             padding: 3px;
             border-radius: 4px;
         }
+        
+        /* Table styles */
+        QTableView {
+            gridline-color: #e0e0e0;
+            selection-background-color: #4b6cb7;
+            selection-color: white;
+        }
     """)
     
     # Initialize models, controllers, and views
     finance_manager = FinanceManager("finance_data.json")
-    controller = AppController(finance_manager)
+    category_manager = CategoryManager("transaction_categories.json")
+    controller = AppController(finance_manager, category_manager)
     main_window = MainWindow(controller)
     
     # Show main window

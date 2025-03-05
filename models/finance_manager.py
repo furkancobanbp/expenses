@@ -53,9 +53,9 @@ class FinanceManager:
             json.dump([g.to_dict() for g in self.goals], file, indent=2)
     
     def add_transaction(self, name: str, amount: float, 
-                        transaction_type: TransactionType, 
-                        date: Optional[datetime] = None) -> Transaction:
-        """Add a new transaction"""
+                    category_name: str, category_type: TransactionType, 
+                    date: Optional[datetime] = None) -> Transaction:
+        """Add a new transaction with category name and type"""
         if date is None:
             date = datetime.now()
         
@@ -64,7 +64,8 @@ class FinanceManager:
             id=str(uuid.uuid4()),
             name=name,
             amount=amount,
-            transaction_type=transaction_type,
+            transaction_type=category_type,
+            category=category_name,
             date=date
         )
         

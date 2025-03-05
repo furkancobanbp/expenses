@@ -584,6 +584,8 @@ class Dashboard(QWidget):
         
         # Set x-axis ticks and labels
         self.trend_canvas.axes.set_xticks(x)
+        self.trend_canvas
+
         self.trend_canvas.axes.set_xticklabels([calendar.month_abbr[m] for m in months])
         
         # Add a legend
@@ -600,7 +602,7 @@ class Dashboard(QWidget):
         self.trend_canvas.draw()
         
     def update_category_chart(self, year, month):
-        """Update the expense category breakdown pie chart"""
+        """Update the expense category breakdown pie chart using transaction categories"""
         # Get transactions for the selected month
         transactions = self.controller.finance_manager.get_transactions_by_month(year, month)
         
@@ -628,13 +630,12 @@ class Dashboard(QWidget):
             self.category_canvas.draw()
             return
         
-        # Extract main keywords from transaction names to create categories
+        # Group transactions by category
         categories = defaultdict(float)
         
         for transaction in expense_transactions:
-            # Simple category extraction - use first word as category
-            # In a real app, you'd have proper categories
-            category = transaction.name.split()[0] if ' ' in transaction.name else transaction.name
+            # Use transaction category if available, otherwise use name as fallback
+            category = transaction.category if transaction.category else transaction.name
             categories[category] += transaction.amount
         
         # Sort by amount and get top categories
@@ -699,8 +700,9 @@ class Dashboard(QWidget):
                                        fontsize=8)
         
         # Add title
-        self.category_canvas.axes.set_title(f'Expense Breakdown - {calendar.month_name[month]} {year}', 
+        self.category_canvas.axes.set_title(f'Expense Breakdown by Category - {calendar.month_name[month]} {year}', 
                                           fontsize=11, fontweight='bold', pad=8)
         
         self.category_canvas.fig.tight_layout()
         self.category_canvas.draw()
+

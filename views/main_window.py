@@ -6,6 +6,7 @@ from .dashboard import Dashboard
 from .entry_form import EntryForm
 from .transaction_list import TransactionList
 from .goals import GoalsTab
+from .category_manager import CategoryManagerView
 
 class MainWindow(QMainWindow):
     def __init__(self, controller):
@@ -63,14 +64,23 @@ class MainWindow(QMainWindow):
         self.entry_form = EntryForm(self.controller)
         tab_widget.addTab(self.entry_form, "Add Transaction")
         
+        # Create category manager tab
+        self.category_manager = CategoryManagerView(self.controller)
+        tab_widget.addTab(self.category_manager, "Manage Categories")
+        
         # Add tab widget with stretch priority
         main_layout.addWidget(tab_widget, 1)
         
         # Connect signals
         self.entry_form.transaction_added.connect(self.on_transaction_added)
+        self.category_manager.categories_changed.connect(self.on_categories_changed)
         
     def on_transaction_added(self):
         # Refresh views when a transaction is added
         self.dashboard.refresh_charts()
         self.transaction_list.refresh_data()
         self.goals_tab.refresh_goals()
+        
+    def on_categories_changed(self):
+        # Refresh the entry form's category list
+        self.entry_form.refresh_categories()

@@ -4,20 +4,29 @@ from typing import List, Dict
 from models.finance_manager import FinanceManager
 from models.transaction import TransactionType
 from models.financial_goal import GoalType, FinancialGoal
+from models.transaction_category_manager import CategoryManager
 
 class AppController:
-    def __init__(self, finance_manager: FinanceManager):
+    def __init__(self, finance_manager: FinanceManager, category_manager: CategoryManager):
         self.finance_manager = finance_manager
+        self.category_manager = category_manager
 
-    def add_transaction(self, name: str, amount: float, transaction_type: TransactionType, date: datetime) -> bool:
-        """Add New Transaction"""
+    # Original transaction methods
+    def add_transaction(self, name: str, amount: float, category_name: str, date: datetime) -> bool:
+        """Add New Transaction using category name"""
         try:
-            self.finance_manager.add_transaction(name, amount, transaction_type, date)
+            # Get the transaction type from the category
+            category_type = self.category_manager.get_category_type(category_name)
+            if not category_type:
+                return False
+                
+            self.finance_manager.add_transaction(name, amount, category_name, category_type, date)
             return True
         except Exception as e:
             print(f"Error adding transaction: {e}")
             return False
 
+    # Financial summary methods
     def get_monthly_summary(self, year: int, month: int) -> Dict:
         """Get monthly summary of finances"""
         return self.finance_manager.get_monthly_summary(year, month)
@@ -34,8 +43,28 @@ class AppController:
         """Get list of years that have transaction data"""
         return self.finance_manager.get_unique_years()
     
-    # Financial Goals Methods
+    # Category management methods
+    def add_category(self, name: str, category_type: TransactionType) -> bool:
+        """Add a new transaction category"""
+        return self.category_manager.add_category(name, category_type)
     
+    def remove_category(self, name: str) -> bool:
+        """Remove a transaction category"""
+        return self.category_manager.remove_category(name)
+    
+    def update_category(self, old_name: str, new_name: str, category_type: TransactionType) -> bool:
+        """Update an existing category"""
+        return self.category_manager.update_category(old_name, new_name, category_type)
+    
+    def get_all_categories(self) -> List[Dict]:
+        """Get all transaction categories"""
+        return self.category_manager.get_all_categories()
+    
+    def get_categories_by_type(self, category_type: TransactionType) -> List[str]:
+        """Get all category names of a specific type"""
+        return self.category_manager.get_categories_by_type(category_type)
+    
+    # Financial Goals Methods
     def add_goal(self, name: str, amount: float, goal_type: GoalType, year: int, month: int) -> bool:
         """Add a new financial goal"""
         try:

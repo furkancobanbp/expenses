@@ -57,8 +57,6 @@ class TransactionList(QWidget):
         self.income_table.setAlternatingRowColors(True)
         self.income_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.income_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.income_table.horizontalHeader().setStretchLastSection(True)
-        self.income_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.income_table.setStyleSheet("""
             QTableView {
                 background-color: #f8f9fa;
@@ -91,8 +89,6 @@ class TransactionList(QWidget):
         self.expense_table.setAlternatingRowColors(True)
         self.expense_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.expense_table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.expense_table.horizontalHeader().setStretchLastSection(True)
-        self.expense_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.expense_table.setStyleSheet("""
             QTableView {
                 background-color: #f8f9fa;
@@ -124,15 +120,23 @@ class TransactionList(QWidget):
         
     def setup_tables(self):
         """Set up the table headers and columns"""
-        headers = ["Date", "Name", "Amount (₺)"]
+        headers = ["Date", "Name", "Category", "Amount (₺)"]  # Added Category column
         
         # Income table
         self.income_table.setColumnCount(len(headers))
         self.income_table.setHorizontalHeaderLabels(headers)
         
+        # Set all columns to equal size
+        for i in range(len(headers)):
+            self.income_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
+        
         # Expense table
         self.expense_table.setColumnCount(len(headers))
         self.expense_table.setHorizontalHeaderLabels(headers)
+        
+        # Set all columns to equal size
+        for i in range(len(headers)):
+            self.expense_table.horizontalHeader().setSectionResizeMode(i, QHeaderView.Stretch)
         
     def refresh_data(self):
         """Refresh the table data based on selected period"""
@@ -168,16 +172,35 @@ class TransactionList(QWidget):
             
             # Name column
             name_item = QTableWidgetItem(transaction.name)
+            name_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             table.setItem(row_position, 1, name_item)
+            
+            # Category column
+            category_text = transaction.category if transaction.category else "N/A"
+            category_item = QTableWidgetItem(category_text)
+            category_item.setTextAlignment(Qt.AlignCenter)
+            
+            # Style the category item
+            font = QFont()
+            font.setBold(True)
+            category_item.setFont(font)
+            
+            # Colorize category based on transaction type
+            if transaction.transaction_type.value == 'income':
+                category_item.setForeground(QColor("#2e7d32"))  # Green for income
+            else:
+                category_item.setForeground(QColor("#c62828"))  # Red for expense
+                
+            table.setItem(row_position, 2, category_item)
             
             # Amount column
             amount_item = QTableWidgetItem(f"{transaction.amount:,.2f}")
             amount_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             
             # Set font to make amount bold
-            font = QFont()
-            font.setBold(True)
-            amount_item.setFont(font)
+            amount_font = QFont()
+            amount_font.setBold(True)
+            amount_item.setFont(amount_font)
             
             # Colorize amount based on transaction type
             if transaction.transaction_type.value == 'income':
@@ -185,7 +208,7 @@ class TransactionList(QWidget):
             else:
                 amount_item.setForeground(QColor("#c62828"))  # Red for expense
                 
-            table.setItem(row_position, 2, amount_item)
+            table.setItem(row_position, 3, amount_item)
             
         # Add summary row
         self.add_summary_row(table, transactions)
@@ -210,7 +233,12 @@ class TransactionList(QWidget):
         empty_item.setBackground(QColor("#f0f0f0"))
         table.setItem(row_position, 1, empty_item)
         
-        # Third cell - total amount
+        # Third cell (Category) - empty with background
+        empty_category_item = QTableWidgetItem("")
+        empty_category_item.setBackground(QColor("#f0f0f0"))
+        table.setItem(row_position, 2, empty_category_item)
+        
+        # Fourth cell - total amount
         total_amount = sum(t.amount for t in transactions)
         total_item = QTableWidgetItem(f"{total_amount:,.2f}")
         total_item.setFont(QFont("", weight=QFont.Bold))
@@ -223,7 +251,7 @@ class TransactionList(QWidget):
         else:
             total_item.setForeground(QColor("#c62828"))  # Red for expense
             
-        table.setItem(row_position, 2, total_item)
+        table.setItem(row_position, 3, total_item)
         
     def get_transactions_by_period(self, period):
         """Get transactions filtered by the selected period"""

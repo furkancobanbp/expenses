@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Salary",
+    "type": "income"
+  },
+  {
+    "name": "Bank Loan",
+    "type": "expense"
+  },
+  {
+    "name": "Debt to Person",
+    "type": "expense"
+  },
+  {
+    "name": "Parental Expenses",
+    "type": "expense"
+  },
+  {
+    "name": "Credit Card Debt",
+    "type": "expense"
+  },
+  {
+    "name": "Bonus",
+    "type": "income"
+  }
+]

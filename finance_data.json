@@ -1,149 +1,170 @@
 [
   {
-    "id": "bfed49dd-274b-4942-99f6-1146ae7a86ab",
-    "name": "Salary",
+    "id": "b66493f0-c45c-49d6-ae10-8da79897cad9",
+    "name": "Maa\u015f",
     "amount": 70000.0,
     "transaction_type": "income",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Salary"
   },
   {
-    "id": "59c2209b-3f0a-451c-a5ef-bf39900028cb",
-    "name": "Kredi Kart\u0131 Asgari \u00d6deme",
-    "amount": 20000.0,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "7669cc78-ca09-4d6c-b172-69e7e9867737",
-    "name": "\u0130\u015f Bankas\u0131 Kredi",
+    "id": "ecf09b95-a033-46a8-a963-9cb626f070dc",
+    "name": "\u0130\u015f Bankas\u0131 Kredi-1",
     "amount": 1153.53,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "ea782e91-cb3d-4aa4-b5b8-340d7e7a1d72",
+    "id": "1adff1d3-bcc6-40e6-9576-edb2268dd2d7",
     "name": "\u0130\u015f Bankas\u0131 Kredi-2",
     "amount": 625.28,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "e40b76f4-1529-4e86-b4bc-1f937b031626",
-    "name": "\u0130\u015f Bankas\u0131 Ek Hesap",
+    "id": "e06fc8c9-b92f-4fe1-8089-a82d804fa64c",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-1",
     "amount": 1773.2,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "fd3978d6-93e6-469d-9712-e56a8bcd7d4c",
-    "name": "\u0130\u015f Bankas\u0131 Ek Hesap 2",
+    "id": "43c12b31-c132-46ed-885b-81a0109d4125",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-2",
     "amount": 236.43,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "96eadefd-23a7-49c8-82b3-d66a8dfd440b",
-    "name": "\u0130\u015fbank Ek Hesap",
+    "id": "a2a67683-af52-4c96-89b4-fc14e55efb60",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-3",
     "amount": 726.87,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "67d3bb14-74bb-4a59-af40-cf063eb47e39",
-    "name": "\u0130\u015f Ek Hesap",
-    "amount": 741.71,
+    "id": "acd39cc3-13b4-450b-9e61-e69b09b6ed01",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-4",
+    "amount": 143.37,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "db9020c3-bf1b-4a93-a421-31e10bcf4444",
-    "name": "\u0130\u015fbank Ek Hesap",
+    "id": "ab83b600-1dbc-4038-8b5a-40acd87752e8",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-5",
     "amount": 627.19,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "272fe0b9-9daa-47a8-9a8a-695a9348cb59",
-    "name": "\u0130\u015fbank Ek Hesap",
+    "id": "cd4eac34-6f03-4283-a4e1-e2e24e942ba7",
+    "name": "\u0130\u015f Bankas\u0131 Ek Hesap-6",
     "amount": 323.72,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   },
   {
-    "id": "da46343f-5507-456e-a62c-83d37e8a8336",
-    "name": "Garanti Kredi Kart\u0131",
-    "amount": 419.7,
+    "id": "9184cf47-5b14-4003-9032-de33ca74ce25",
+    "name": "\u0130\u015f Bankas\u0131 Kredi Kart\u0131 Asgarisi",
+    "amount": 20000.0,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Credit Card Debt"
   },
   {
-    "id": "3566950f-0bc6-4c38-81fb-a3a9285ad945",
-    "name": "Garanti Kredi Taksis",
-    "amount": 2500.0,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "23925959-5d5a-443a-a9d1-43270eea32c7",
-    "name": "Garanti Ek Hesap",
-    "amount": 550.0,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "1a74c641-4738-4489-b228-c8c62cffb2fd",
-    "name": "Akbank Kredi",
-    "amount": 1584.9,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "857bd87e-2080-4d0c-b33d-ebdeb95ed70e",
-    "name": "Akbank Ek Hesap 1",
-    "amount": 1251.94,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "7b74de6a-a7de-41b3-922f-563e81cc66b2",
-    "name": "Akbank Ek Hesap 2",
-    "amount": 780.33,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "db3fd007-3fd6-4825-87f9-66abf4f7163b",
-    "name": "Akbank Ek  Hesap -3",
-    "amount": 1806.61,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "a42c3b4c-76a0-4e41-b28a-2a3de010ce21",
-    "name": "Akbank Kredi Kart\u0131 Asgari",
-    "amount": 4500.0,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "56e16bd7-9ad5-4cac-b3d0-2b7562cdf16e",
-    "name": "Annem - Babam",
-    "amount": 15000.0,
-    "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
-  },
-  {
-    "id": "d50d716c-ee93-4328-80b9-f82243ec2646",
+    "id": "7ce0e6f4-3dae-4163-be66-efff73650eb0",
     "name": "Eni\u015fte Bor\u00e7",
     "amount": 10000.0,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Debt to Person"
   },
   {
-    "id": "c13f4ef9-14e2-4f4c-8874-27049d72a52d",
-    "name": "Vak\u0131f Ek Hesap",
+    "id": "8433c885-4807-43ab-9d30-e0f72b2389a9",
+    "name": "Annem-Babam Ayl\u0131k",
+    "amount": 15000.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Parental Expenses"
+  },
+  {
+    "id": "938e13b7-4351-4a63-b91a-9f1ec43ce384",
+    "name": "Akbank Kredi",
+    "amount": 1584.9,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "ad428af2-5eed-4a2e-8ce5-3b661ff98a47",
+    "name": "Akbank Art\u0131 Para-1",
+    "amount": 1251.94,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "f2057dff-dcf4-42c8-a12c-a61d763968c3",
+    "name": "Akbank Art\u0131 Para-2",
+    "amount": 780.33,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "21bfc66b-be2a-4e92-b1f8-4e4a9f5dc8b8",
+    "name": "Akbank Art\u0131 Para-3",
+    "amount": 1806.61,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "1d1822ea-c053-4c77-a537-a1ef12c4ab15",
+    "name": "Akbank Kredi Kart\u0131 Asgari",
+    "amount": 4500.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Credit Card Debt"
+  },
+  {
+    "id": "dd4dbe1c-ea69-48a1-86f2-6f8b8ef843a5",
+    "name": "Garanti Kredi",
+    "amount": 2500.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "0a70e215-c3bb-4f00-831a-e1de506ed111",
+    "name": "Garanti Ek Hesap",
     "amount": 550.0,
     "transaction_type": "expense",
-    "date": "2025-03-01T00:00:00"
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
+  },
+  {
+    "id": "0d15e1df-7151-4f12-819b-61fdf2033f03",
+    "name": "Garanti Kredi Kart\u0131",
+    "amount": 450.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Credit Card Debt"
+  },
+  {
+    "id": "3df15b00-472b-44d4-80f6-f15b282327f2",
+    "name": "Vak\u0131fbank Ek Hesap",
+    "amount": 550.0,
+    "transaction_type": "expense",
+    "date": "2025-03-01T00:00:00",
+    "category": "Bank Loan"
   }
 ]
