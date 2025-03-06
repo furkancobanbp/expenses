@@ -1,11 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import Qt
 
-from models.finance_manager import FinanceManager
-from models.transaction_category_manager import CategoryManager
-from models.forecast_manager import ForecastManager
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
+
 from controllers.app_controller import AppController
+from models.finance_manager import FinanceManager
+from models.forecast_manager import ForecastManager
+from models.transaction_category_manager import CategoryManager
 from views.main_window import MainWindow
 
 def main():
